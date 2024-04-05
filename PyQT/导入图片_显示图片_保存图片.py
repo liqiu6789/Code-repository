@@ -1,0 +1,245 @@
+import copy
+import cv2
+import sys
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import (
+    QApplication,
+    QMainWindow,
+    QFileDialog,
+    QMessageBox,
+    QWidget,
+    QVBoxLayout,
+    QHBoxLayout,
+    QFrame,
+    QToolButton,
+    QSpacerItem,
+    QLabel,
+    QSizePolicy,
+)
+from PyQt5.QtGui import QImage, QPixmap, QIcon
+from PyQt5.QtCore import Qt, QSize
+from image_label import ImageLabel
+
+
+class MyWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.initialize()
+
+    def initialize(self):
+        """
+        Initialize the user interface and set initial states.
+        """
+        self.setup_ui()
+        self.set_initial_states()
+
+    def setup_ui(self):
+        """
+        Set up the main window layout and components.
+        """
+        self.setWindowTitle("Image Editor")
+        self.resize(926, 806)
+
+        self.central_widget = QWidget(self)
+        self.central_layout = QVBoxLayout(self.central_widget)
+        self.setCentralWidget(self.central_widget)
+
+        # Title bar with open, save, and undo buttons
+        self.title_bar = QFrame(self.central_widget)
+        self.title_bar.setFrameShape(QFrame.StyledPanel)
+        self.title_bar.setFrameShadow(QFrame.Raised)
+        self.title_layout = QHBoxLayout(self.title_bar)
+
+        self.btn_open = QToolButton(self.title_bar)
+        self.btn_save = QToolButton(self.title_bar)
+        self.btn_undo = QToolButton(self.title_bar)
+
+        self.title_layout.addWidget(self.btn_open)
+        self.title_layout.addWidget(self.btn_save)
+        self.title_layout.addWidget(self.btn_undo)
+
+        # Control bar with confirm and cancel buttons
+        self.control_bar = QFrame(self.title_bar)
+        self.control_layout = QHBoxLayout(self.control_bar)
+        self.btn_confirm = QToolButton(self.control_bar)
+        self.btn_cancel = QToolButton(self.control_bar)
+
+        self.control_layout.addWidget(self.btn_confirm)
+        self.control_layout.addWidget(self.btn_cancel)
+        self.title_layout.addWidget(self.control_bar)
+
+        # Add a spacer item to the title layout
+        self.title_layout.addItem(QSpacerItem(100, 20, QSizePolicy.Expanding, QSizePolicy.Minimum))
+
+        # Image frame with an ImageLabel widget to display images
+        self.img_frame = QFrame(self.central_widget)
+        self.img_frame.setFrameShape(QFrame.StyledPanel)
+        self.img_frame.setFrameShadow(QFrame.Raised)
+        self.img_layout = QHBoxLayout(self.img_frame)
+        self.img_display = ImageLabel(self.img_frame)
+        self.img_layout.addWidget(self.img_display)
+
+        self.central_layout.addWidget(self.title_bar)
+        self.central_layout.addWidget(self.img_frame)
+
+        # Set button text, icons, styles, and layout styles
+        self.set_buttons_text_icons()
+        self.set_buttons_styles()
+        self.set_layout_styles()
+
+    def set_initial_states(self):
+        """
+        Set initial states for UI components.
+        """
+        self.control_bar.setVisible(False)
+
+    def set_buttons_text_icons(self):
+        """
+        Set button texts, icons, and style for open and save buttons.
+        """
+        self.btn_open.setText("打开")
+        self.btn_open.setIcon(QIcon("./icon/open.png"))
+        self.btn_open.setIconSize(QSize(36, 36))
+        self.btn_open.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.btn_open.clicked.connect(self.open_img)
+
+        self.btn_save.setText("保存")
+        self.btn_save.setIcon(QIcon("./icon/save.png"))
+        self.btn_save.setIconSize(QSize(36, 36))
+        self.btn_save.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.btn_save.clicked.connect(self.save_img)
+
+    def set_buttons_styles(self):
+        """
+        Set styles for all buttons and the control bar.
+        """
+        transparent_button_style = "background: rgba(0, 0, 0, 0); color: rgb(255, 255, 255);"
+        gray_button_style = "background: rgb(80, 80, 80); color: rgb(255, 255, 255);"
+
+        buttons = [self.btn_open, self.btn_save, self.btn_undo, self.btn_confirm, self.btn_cancel]
+        for btn in buttons:
+            btn.setStyleSheet(transparent_button_style)
+
+        self.control_bar.setStyleSheet(gray_button_style)
+
+    def set_layout_styles(self):
+        """
+        Set styles for central layout and title bar.
+        """
+        self.central_layout.setContentsMargins(0, 0, 0, 0)
+        self.central_layout.setSpacing(0)
+
+        self.title_bar.setMinimumSize(QSize(0, 55))
+        self.title_bar.setMaximumSize(QSize(188888, 55))
+
+        self.control_bar.setMinimumSize(QSize(0, 45))
+        self.control_bar.setMaximumSize(QSize(120, 45))
+
+        self.img_frame.setMinimumSize(QSize(100, 0))
+
+        font = QtGui.QFont()
+        font.setPointSize(8)
+        self.setFont(font)
+        self.btn_open.setFont(font)
+        self.btn_save.setFont(font)
+
+        self.central_widget.setStyleSheet("background: rgb(252, 255, 255);")
+        self.title_bar.setStyleSheet("background: rgb(60, 60, 60);")
+
+    def open_img(self):
+        """
+        Open an image file using a file dialog and display it.
+        """
+        img_name, img_type = QFileDialog.getOpenFileName(
+            self, "打开图片", "", "*.jpg;*.png;*.jpeg"
+        )
+        if img_name == "" or img_name is None:
+            self.show_warning_message_box("未选择图片")
+            return
+
+        img = cv2.imread(img_name)
+        self.show_image(img)
+        self.current_img = img
+        self.last_img = self.current_img
+        self.original_img = copy.deepcopy(self.current_img)
+        self.original_img_path = img_name
+
+    def show_image(self, img, is_grayscale=False):
+        """
+        Display an image in the ImageLabel widget.
+
+        Args:
+            img (numpy.ndarray): The image to display (in BGR or grayscale format).
+            is_grayscale (bool, optional): Whether the image is grayscale. Defaults to False.
+        """
+        if len(img.shape) == 3:  # Color image
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # Convert BGR to RGB
+
+        height, width, channels = img.shape
+        bytes_per_line = channels * width
+
+        if len(img.shape) == 2:  # Grayscale image
+            format = QImage.Format_Grayscale8
+            bytes_per_line *= 1  # Treat grayscale image as having one channel
+        else:  # RGB image
+            format = QImage.Format_RGB888
+
+        qimage = QImage(img.data, width, height, bytes_per_line, format)
+        pixmap = QPixmap.fromImage(qimage)
+        self.img_display.setPixmap(pixmap)
+        self.img_display.repaint()
+
+    def crop_image(self, src_img, x_start, x_end, y_start, y_end):
+        """
+        Crop an image.
+
+        Args:
+            src_img (numpy.ndarray): The source image to crop.
+            x_start (int): Starting x-coordinate of the crop region.
+            x_end (int): Ending x-coordinate of the crop region.
+            y_start (int): Starting y-coordinate of the crop region.
+            y_end (int): Ending y-coordinate of the crop region.
+
+        Returns:
+            numpy.ndarray: The cropped image.
+        """
+        return src_img[y_start:y_end, x_start:x_end]
+
+    def show_warning_message_box(self, msg):
+        """
+        Show a warning message box with the given message.
+
+        Args:
+            msg (str): The message to display.
+        """
+        QMessageBox.warning(self, "警告", msg, QMessageBox.Ok)
+
+    def show_info_message_box(self, msg):
+        """
+        Show an information message box with the given message.
+
+        Args:
+            msg (str): The message to display.
+        """
+        QMessageBox.information(self, "提示", msg, QMessageBox.Ok)
+
+    def save_img(self):
+        """
+        Save the current image to a file using a file dialog.
+        """
+        if self.current_img is None:
+            self.show_warning_message_box("未选择图片")
+            return
+
+        ext_name = self.original_img_path[self.original_img_path.rindex(".") :]
+        img_path, img_type = QFileDialog.getSaveFileName(
+            self, "保存图片", self.original_img_path, f"*{ext_name}"
+        )
+        cv2.imwrite(img_path, self.current_img)
+
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = MyWindow()
+    window.show()
+    sys.exit(app.exec_())
