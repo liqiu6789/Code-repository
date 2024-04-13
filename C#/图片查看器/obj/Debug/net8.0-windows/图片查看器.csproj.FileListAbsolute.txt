@@ -1,0 +1,16 @@
+C:\Users\Administrator\source\repos\图片查看器\bin\Debug\net8.0-windows\图片查看器.exe
+C:\Users\Administrator\source\repos\图片查看器\bin\Debug\net8.0-windows\图片查看器.deps.json
+C:\Users\Administrator\source\repos\图片查看器\bin\Debug\net8.0-windows\图片查看器.runtimeconfig.json
+C:\Users\Administrator\source\repos\图片查看器\bin\Debug\net8.0-windows\图片查看器.dll
+C:\Users\Administrator\source\repos\图片查看器\bin\Debug\net8.0-windows\图片查看器.pdb
+C:\Users\Administrator\source\repos\图片查看器\obj\Debug\net8.0-windows\图片查看器.Form1.resources
+C:\Users\Administrator\source\repos\图片查看器\obj\Debug\net8.0-windows\图片查看器.csproj.GenerateResource.cache
+C:\Users\Administrator\source\repos\图片查看器\obj\Debug\net8.0-windows\图片查看器.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Administrator\source\repos\图片查看器\obj\Debug\net8.0-windows\图片查看器.AssemblyInfoInputs.cache
+C:\Users\Administrator\source\repos\图片查看器\obj\Debug\net8.0-windows\图片查看器.AssemblyInfo.cs
+C:\Users\Administrator\source\repos\图片查看器\obj\Debug\net8.0-windows\图片查看器.csproj.CoreCompileInputs.cache
+C:\Users\Administrator\source\repos\图片查看器\obj\Debug\net8.0-windows\图片查看器.dll
+C:\Users\Administrator\source\repos\图片查看器\obj\Debug\net8.0-windows\refint\图片查看器.dll
+C:\Users\Administrator\source\repos\图片查看器\obj\Debug\net8.0-windows\图片查看器.pdb
+C:\Users\Administrator\source\repos\图片查看器\obj\Debug\net8.0-windows\图片查看器.genruntimeconfig.cache
+C:\Users\Administrator\source\repos\图片查看器\obj\Debug\net8.0-windows\ref\图片查看器.dll
