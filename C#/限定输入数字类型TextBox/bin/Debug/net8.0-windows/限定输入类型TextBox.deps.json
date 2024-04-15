@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "限定输入类型TextBox/1.0.0": {
+        "runtime": {
+          "限定输入类型TextBox.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "限定输入类型TextBox/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
