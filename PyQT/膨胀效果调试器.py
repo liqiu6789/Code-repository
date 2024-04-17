@@ -83,12 +83,12 @@ class ImageDisplayWidget(QWidget):
             QLabel {  
                 font-family: '微软雅黑';  
                 font-size: 12pt;  
-                color: red;  
+                color: blue;  
             }
             QPushButton {  
                 font-family: '微软雅黑';  
                 font-size: 12pt;  
-                color: red;  
+                color: blue;  
             }  
         """)
 
@@ -101,7 +101,7 @@ class ImageDisplayWidget(QWidget):
                 border-radius: 4px;  
             }  
             QSlider::handle:horizontal {  
-                background: red;  
+                background: blue;  
                 border: 1px solid #999999;  
                 width: 16px;  
                 height: 16px;  
@@ -109,7 +109,7 @@ class ImageDisplayWidget(QWidget):
                 border-radius: 8px;  
             }  
             QSlider::add-page:horizontal {  
-                background: #FF0000; /* This is the red color from your font color */  
+                background: #FF0000; /* This is the blue color from your font color */  
             }  
             QSlider::sub-page:horizontal {  
                 background: #555555; /* You can choose a different color for the filled part */  
