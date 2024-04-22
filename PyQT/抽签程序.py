@@ -1,7 +1,6 @@
 import sys
 import random
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QTextEdit, QPushButton, QMessageBox
-from PyQt5.QtCore import Qt
 
 
 class RandomPicker(QWidget):
