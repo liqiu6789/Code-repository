@@ -1,6 +1,6 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QSplitter, QTextEdit, QVBoxLayout, QWidget
-
+from PyQt5.QtCore import Qt
 
 class SplitterExample(QWidget):
     def __init__(self):
