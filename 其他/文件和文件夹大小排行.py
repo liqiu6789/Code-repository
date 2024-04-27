@@ -64,7 +64,7 @@ def print_ranked_sizes(ranked_sizes, output_file='ranked_sizes.txt'):
 
 
 if __name__ == "__main__":
-    start_path = r"C:\BaiduNetdiskDownload"
+    start_path = "C:\Program Files (x86)"
     sizes = list_files_and_folders(start_path)
     ranked_sizes = rank_sizes(sizes)
     print_ranked_sizes(ranked_sizes, output_file='ranked_sizes.txt')
