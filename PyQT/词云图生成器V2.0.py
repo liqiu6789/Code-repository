@@ -138,7 +138,7 @@ class MainWindow(QWidget):
         if color.isValid():
             # 更新按钮文本为颜色代码
             self.color_code = color.name()
-            button = self.findChild(QPushButton, "选择背景颜色")
+            button = self.findChild(QPushButton, "选l择背景颜色")
             button.setText(self.color_code)
             # 更新按钮文本颜色
             button.setStyleSheet(f"color: {self.color_code};")
