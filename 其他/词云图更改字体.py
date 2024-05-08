@@ -1,3 +1,8 @@
+# 楷体：simkai.ttf
+# 隶书：SIMLI.TTF
+# 宋体:simsun.ttc
+# 黑体：simhei.ttf
+# 微软雅黑：msyh.ttc
 # 导入必要的库
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
@@ -15,7 +20,7 @@ seg_list = jieba.cut(text, cut_all=False)
 words = " ".join(seg_list)
 
 # 设置字体文件路径（确保支持中文）
-font_path = 'simhei.ttf'  # 你需要指定一个支持中文的字体文件路径
+font_path = 'SIMLI.TTF'  # 你需要指定一个支持中文的字体文件路径
 
 # 创建词云对象，设置词云的一些属性
 wordcloud = WordCloud(font_path=font_path,  # 设置字体文件路径，确保支持中文
