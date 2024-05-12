@@ -3,7 +3,7 @@ import os
 from win32com.client import Dispatch, DispatchEx  # 导入pywin32模块的client包下的函数
 from win32com.client import constants  #  导入pywin32模块的client包下的保存COM常量的类
 from win32com.client import gencache    #  导入pywin32模块的client包下的gencache函数
-from PyPDF2 import  PdfFileReader  # 获取页码用
+from PyPDF2 import  PdfReader  # 获取页码用
 import pythoncom  # 导入封装了OLE自动化API的模块，该模块为pywin32的子模块
 totalPages = 0  # 记录总页数的全局变量
 returnlist = []  # 保存文件列表的全局变量
@@ -99,8 +99,8 @@ def wordtopdf1(filelist):
 
 def getPdfPageNum(path):
     with open(path, "rb") as file:
-        doc = PdfFileReader(file)
-        pagecount = doc.getNumPages()
+        doc = PdfReader(file)
+        pagecount = len(doc.pages)
     return pagecount
 
 
@@ -109,7 +109,7 @@ def getPdfPageNum(path):
 def getPdfOutlines(pdfpath,listpath,isList):
     print("提取目录")
     with open(pdfpath, "rb") as file:
-        doc = PdfFileReader(file)
+        doc = PdfReader(file)
         outlines = doc.getOutlines()  # 获取大纲
         global returnlist  # 全局变量，保存大纲的列表
         returnlist = []   # 创建一个空列表
