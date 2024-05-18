@@ -1,6 +1,6 @@
 from PyQt5 import QtCore, QtGui
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import qApp,QFileDialog
+from PyQt5.QtWidgets import qApp,QFileDialog,QMessageBox
 
 import sys
 import pandas as pd
@@ -157,6 +157,7 @@ class Ui_MainWindow(QtWidgets.QWidget):
         df = pd.DataFrame(pd.read_excel(a))
         self.textEdit.setText(str(df))
 
+
     #提取列数据
     def click2(self):
         global root
@@ -164,11 +165,14 @@ class Ui_MainWindow(QtWidgets.QWidget):
         # 获取当前选中行的数据
         a = root + '/' + str(self.list1[myrow])
         df = pd.DataFrame(pd.read_excel(a))
-        #显示指定列数据
-        df1 = df[['买家会员名', '收货人姓名', '联系手机','宝贝标题']]
-        self.textEdit.setText(str(df1))
-        #调用SaveExcel函数，保存数据到Excel
-        SaveExcel(df1,self.rButton2.isChecked())
+        df.to_csv('output.csv', index=False)
+        # 创建一个QMessageBox对象
+        msg_box = QMessageBox()
+        # 设置消息框的类型为Information
+        msg_box.setIcon(QMessageBox.Information)
+        # 设置标题和消息文本
+        msg_box.setWindowTitle('提示')
+        msg_box.setText("转换为CSV文件成功")
 
     #定向筛选
     def click3(self):
