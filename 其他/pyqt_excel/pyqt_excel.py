@@ -55,7 +55,7 @@ class Ui_MainWindow(QtWidgets.QWidget):
         self.toolBar.setAutoFillBackground(False)
         self.toolBar.setInputMethodHints(QtCore.Qt.ImhNone)
         self.toolBar.setAllowedAreas(QtCore.Qt.AllToolBarAreas)
-        self.toolBar.setIconSize(QtCore.QSize(48, 48))
+        self.toolBar.setIconSize(QtCore.QSize(100, 100))
         self.toolBar.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
         self.toolBar.setFloatable(False)
         self.toolBar.setObjectName("toolBar")
@@ -91,14 +91,12 @@ class Ui_MainWindow(QtWidgets.QWidget):
         icon5.addPixmap(QtGui.QPixmap("image/图标-07.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.button7.setIcon(icon5)
         self.button7.setObjectName("button7")
-        self.toolBar.addSeparator()
         self.toolBar.addAction(self.button1)
         self.toolBar.addAction(self.button2)
         self.toolBar.addAction(self.button3)
         self.toolBar.addAction(self.button4)
         self.toolBar.addAction(self.button5)
         self.toolBar.addAction(self.button7)
-        self.toolBar.addSeparator()
         # 单击工具栏“退出”按钮退出程序
         self.button7.triggered.connect(qApp.quit)
         # 单击工具栏按钮触发自定义槽函数
