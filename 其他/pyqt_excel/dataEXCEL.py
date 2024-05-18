@@ -6,13 +6,11 @@ import sys
 import pandas as pd
 import os
 import glob
-import numpy as np
 import matplotlib.pyplot as plt
 root=""
 fileNum = 0
 myrow=0
 
-#自定义函数SaveExcel用于保存数据到Excel
 def SaveExcel(df,isChecked):
     # 将提取后的数据保存到Excel
     if (isChecked):
@@ -29,48 +27,11 @@ class Ui_MainWindow(QtWidgets.QWidget):
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.list1 = QtWidgets.QListView(self.centralwidget)
-        self.list1.setGeometry(QtCore.QRect(1, 1, 171, 401))
+        self.list1.setGeometry(QtCore.QRect(1, 1, 171, 601))
         self.list1.setObjectName("list1")
-        self.text1 = QtWidgets.QTextEdit(self.centralwidget)
-        self.text1.setGeometry(QtCore.QRect(110, 450, 631, 21))
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.text1.sizePolicy().hasHeightForWidth())
-        self.text1.setSizePolicy(sizePolicy)
-        self.text1.setObjectName("text1")
-        self.viewButton = QtWidgets.QPushButton(self.centralwidget)
-        self.viewButton.setGeometry(QtCore.QRect(746, 450, 75, 23))
-        self.viewButton.setObjectName("viewButton")
-
-        self.rButton1 = QtWidgets.QRadioButton(self.centralwidget)
-        self.rButton1.setGeometry(QtCore.QRect(10, 450, 111, 16))
-        font = QtGui.QFont()
-        font.setBold(True)
-        font.setWeight(75)
-        self.rButton1.setFont(font)
-        self.rButton1.setObjectName("rButton1")
-        self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setEnabled(False)
-        self.label.setGeometry(QtCore.QRect(7, 409, 61, 16))
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.label.setFont(font)
-        self.label.setObjectName("label")
-        self.rButton2 = QtWidgets.QRadioButton(self.centralwidget)
-        self.rButton2.setGeometry(QtCore.QRect(10, 430, 131, 16))
-        font = QtGui.QFont()
-        font.setBold(True)
-        font.setWeight(75)
-        self.rButton2.setFont(font)
-        self.rButton2.setCheckable(True)
-        self.rButton2.setChecked(True)
-        self.rButton2.setObjectName("rButton2")
 
         self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
-        self.textEdit.setGeometry(QtCore.QRect(170, 0, 661, 401))
+        self.textEdit.setGeometry(QtCore.QRect(170, 0, 661, 601))
         #水平滚动条
         self.textEdit.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
         self.textEdit.setObjectName("textEdit")
@@ -106,37 +67,32 @@ class Ui_MainWindow(QtWidgets.QWidget):
         self.button1.setIcon(icon)
         self.button1.setObjectName("button1")
         self.button2 = QtWidgets.QAction(MainWindow)
-        #self.button2.setCheckable(True)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap("image/图标-02.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.button2.setIcon(icon)
         self.button2.setObjectName("button2")
         self.button3 = QtWidgets.QAction(MainWindow)
-        #self.button3.setCheckable(True)
         icon1 = QtGui.QIcon()
         icon1.addPixmap(QtGui.QPixmap("image/图标-03.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.button3.setIcon(icon1)
         self.button3.setObjectName("button3")
         self.button4 = QtWidgets.QAction(MainWindow)
-        #self.button4.setCheckable(True)
         icon2 = QtGui.QIcon()
         icon2.addPixmap(QtGui.QPixmap("image/图标-04.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.button4.setIcon(icon2)
         self.button4.setObjectName("button4")
         self.button5 = QtWidgets.QAction(MainWindow)
-        #self.button5.setCheckable(True)
+
         icon3 = QtGui.QIcon()
         icon3.addPixmap(QtGui.QPixmap("image/图标-05.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.button5.setIcon(icon3)
         self.button5.setObjectName("button5")
         self.button6 = QtWidgets.QAction(MainWindow)
-        #self.button6.setCheckable(True)
         icon4 = QtGui.QIcon()
         icon4.addPixmap(QtGui.QPixmap("image/图标-06.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.button6.setIcon(icon4)
         self.button6.setObjectName("button6")
         self.button7 = QtWidgets.QAction(MainWindow)
-        #self.button7.setCheckable(True)
         icon5 = QtGui.QIcon()
         icon5.addPixmap(QtGui.QPixmap("image/图标-07.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.button7.setIcon(icon5)
@@ -144,14 +100,10 @@ class Ui_MainWindow(QtWidgets.QWidget):
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.button1)
         self.toolBar.addAction(self.button2)
-        self.toolBar.addSeparator()
-        self.toolBar.addSeparator()
         self.toolBar.addAction(self.button3)
         self.toolBar.addAction(self.button4)
         self.toolBar.addAction(self.button5)
         self.toolBar.addAction(self.button6)
-        self.toolBar.addSeparator()
-        self.toolBar.addSeparator()
         self.toolBar.addAction(self.button7)
         self.toolBar.addSeparator()
         # 单击工具栏“退出”按钮退出程序
@@ -163,8 +115,7 @@ class Ui_MainWindow(QtWidgets.QWidget):
         self.button4.triggered.connect(self.click4)
         self.button5.triggered.connect(self.click5)
         self.button6.triggered.connect(self.click6)
-        #单击"浏览"按钮，选择文件存储路径
-        self.viewButton.clicked.connect(self.viewButton_click)
+
         # 单击QListView列表触发自定义的槽函数
         self.list1.clicked.connect(self.clicked)
         # 设置Dataframe对象显示所有列
@@ -177,23 +128,16 @@ class Ui_MainWindow(QtWidgets.QWidget):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "Excel数据分析师"))
-        self.viewButton.setText(_translate("MainWindow", "浏览"))
-        self.rButton1.setText(_translate("MainWindow", "自定义文件夹"))
-        self.label.setText(_translate("MainWindow", "输出选项"))
-        self.rButton2.setText(_translate("MainWindow", "保存在原文件夹内"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Excel数据处理系统"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
-        self.button1.setText(_translate("MainWindow", "导入EXCEL"))
-        self.button2.setText(_translate("MainWindow", "提取列数据"))
-        self.button3.setText(_translate("MainWindow", "定向筛选"))
-        self.button3.setToolTip(_translate("MainWindow", "定向筛选"))
+        self.button1.setText(_translate("MainWindow", "选择文件夹"))
+        self.button2.setText(_translate("MainWindow", "转换为csv"))
+        self.button3.setText(_translate("MainWindow", "过滤器"))
         self.button4.setText(_translate("MainWindow", "多表合并"))
         self.button5.setText(_translate("MainWindow", "多表统计排行"))
-        self.button5.setToolTip(_translate("MainWindow", "多表统计排行"))
         self.button6.setText(_translate("MainWindow", "生成图表"))
-        self.button6.setToolTip(_translate("MainWindow", "生成图表"))
         self.button7.setText(_translate("MainWindow", "退出"))
-        self.button7.setToolTip(_translate("MainWindow", "退出"))
+
 
 
     def click1(self):
@@ -327,12 +271,6 @@ class Ui_MainWindow(QtWidgets.QWidget):
         plt.ylabel(u'收入（比例）')
         plt.show()
 
-    #单击“浏览”按钮选择文件存储路径
-    def viewButton_click(self):
-        global temproot
-        temproot = QFileDialog.getExistingDirectory(self, "选择文件夹", "/")
-        self.text1.setText(temproot)
-
 
 
 
@@ -349,5 +287,4 @@ def show_MainWindow():
 if __name__ == "__main__":
         show_MainWindow()
         path=root
-        # visitDir(path)
 
