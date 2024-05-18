@@ -1,5 +1,4 @@
 from pdfminer.high_level import extract_text
-from pathlib import Path
 
 
 def extract_pdf_to_txt(pdf_path, txt_path):
