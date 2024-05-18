@@ -23,15 +23,15 @@ def SaveExcel(df,isChecked):
 class Ui_MainWindow(QtWidgets.QWidget):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(838, 596)
+        MainWindow.resize(1038, 796)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.list1 = QtWidgets.QListView(self.centralwidget)
-        self.list1.setGeometry(QtCore.QRect(1, 1, 171, 601))
+        self.list1.setGeometry(QtCore.QRect(1, 1, 171, 801))
         self.list1.setObjectName("list1")
 
         self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
-        self.textEdit.setGeometry(QtCore.QRect(170, 0, 661, 601))
+        self.textEdit.setGeometry(QtCore.QRect(170, 0, 861, 801))
         #水平滚动条
         self.textEdit.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
         self.textEdit.setObjectName("textEdit")
@@ -87,11 +87,6 @@ class Ui_MainWindow(QtWidgets.QWidget):
         icon3.addPixmap(QtGui.QPixmap("image/图标-05.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.button5.setIcon(icon3)
         self.button5.setObjectName("button5")
-        self.button6 = QtWidgets.QAction(MainWindow)
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap("image/图标-06.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.button6.setIcon(icon4)
-        self.button6.setObjectName("button6")
         self.button7 = QtWidgets.QAction(MainWindow)
         icon5 = QtGui.QIcon()
         icon5.addPixmap(QtGui.QPixmap("image/图标-07.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -103,18 +98,17 @@ class Ui_MainWindow(QtWidgets.QWidget):
         self.toolBar.addAction(self.button3)
         self.toolBar.addAction(self.button4)
         self.toolBar.addAction(self.button5)
-        self.toolBar.addAction(self.button6)
         self.toolBar.addAction(self.button7)
         self.toolBar.addSeparator()
         # 单击工具栏“退出”按钮退出程序
         self.button7.triggered.connect(qApp.quit)
         # 单击工具栏按钮触发自定义槽函数
+
         self.button1.triggered.connect(self.click1)
         self.button2.triggered.connect(self.click2)
         self.button3.triggered.connect(self.click3)
         self.button4.triggered.connect(self.click4)
         self.button5.triggered.connect(self.click5)
-        self.button6.triggered.connect(self.click6)
 
         # 单击QListView列表触发自定义的槽函数
         self.list1.clicked.connect(self.clicked)
@@ -135,7 +129,6 @@ class Ui_MainWindow(QtWidgets.QWidget):
         self.button3.setText(_translate("MainWindow", "过滤器"))
         self.button4.setText(_translate("MainWindow", "多表合并"))
         self.button5.setText(_translate("MainWindow", "多表统计排行"))
-        self.button6.setText(_translate("MainWindow", "生成图表"))
         self.button7.setText(_translate("MainWindow", "退出"))
 
 
@@ -237,39 +230,6 @@ class Ui_MainWindow(QtWidgets.QWidget):
         # 调用SaveExcel函数，将统计排行结果保存到Excel
         SaveExcel(df1, self.rButton2.isChecked())
 
-    def click6(self):
-        global root
-        # 合并Excel表格
-        filearray = []
-        filelocation = glob.glob(root + "\*.xls")
-        for filename in filelocation:
-            filearray.append(filename)
-        res = pd.read_excel(filearray[0])
-        for i in range(1, len(filearray)):
-            A = pd.read_excel(filearray[i])
-            res = pd.concat([res, A], ignore_index=False, sort=True)
-        # 分组统计排序
-        # 通过reset_index()函数将groupby()的分组结果转成DataFrame对象
-        df=res[(res.类别=='全彩系列')]
-        df1 = df.groupby(["图书编号"])["买家实际支付金额"].sum().reset_index()
-        df1 = df1.set_index('图书编号')  # 设置索引
-        df1 = df1[u'买家实际支付金额'].copy()
-        df2=df1.sort_values(ascending=False)  # 排序
-        SaveExcel(df2, self.rButton2.isChecked())
-        # 图表字体为华文细黑，字号为12
-        plt.rc('font', family='SimHei', size=10)
-        #plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
-        plt.figure("贡献度分析")
-        df2.plot(kind='bar')
-        plt.ylabel(u'销售收入（元）')
-        p = 1.0*df2.cumsum()/df2.sum()
-        print(p)
-        p.plot(color='r', secondary_y=True, style='-o', linewidth=0.5)
-        #plt.title("图书贡献度分析")
-        plt.annotate(format(p[9], '.4%'), xy=(9, p[9]), xytext=(9 * 0.9, p[9] * 0.9),
-                    arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.1"))  # 添加标记，并指定箭头样式。
-        plt.ylabel(u'收入（比例）')
-        plt.show()
 
 
 
