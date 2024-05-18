@@ -6,7 +6,6 @@ import sys
 import pandas as pd
 import os
 import glob
-import matplotlib.pyplot as plt
 root=""
 fileNum = 0
 myrow=0
