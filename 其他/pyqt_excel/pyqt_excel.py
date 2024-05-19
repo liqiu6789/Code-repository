@@ -163,73 +163,71 @@ class Ui_MainWindow(QtWidgets.QWidget):
         global root
         global myrow
         # 获取当前选中行的数据
+        print(111111111111111)
         a = root + '/' + str(self.list1[myrow])
         df = pd.DataFrame(pd.read_excel(a))
         df.to_csv('output.csv', index=False)
         # 创建一个QMessageBox对象
-        msg_box = QMessageBox()
+        # 创建一个QMessageBox对象，并指定self作为父窗口
+        msg_box = QMessageBox(self)
         # 设置消息框的类型为Information
         msg_box.setIcon(QMessageBox.Information)
         # 设置标题和消息文本
         msg_box.setWindowTitle('提示')
         msg_box.setText("转换为CSV文件成功")
+        # 显示消息框，并等待用户响应（这是一个模态对话框）
+        msg_box.exec_()  # 注意这里使用 exec_() 而不是 exec
 
     #定向筛选
     def click3(self):
         global root
         global myrow
         #合并Excel表格
-        filearray = []
-        filelocation = glob.glob(root + "\*.xls")
-        for filename in filelocation:
-            filearray.append(filename)
-        res = pd.read_excel(filearray[0])
-        for i in range(1, len(filearray)):
-            A = pd.read_excel(filearray[i])
-            res = pd.concat([res, A], ignore_index=False, sort=True)
-        # 显示指定列数据
-        df1 = res[['买家会员名', '收货人姓名', '联系手机','宝贝标题']]
-        df2 = df1.loc[df1['宝贝标题'] == '零基础学Python']
+        a = root + '/' + str(self.list1[myrow])
+        df = pd.DataFrame(pd.read_excel(a))
+        df1 = df[['市区', '小区', "面积(㎡)",'价格(万元)','年份']]
+        df2 = df1.loc[df1['市区'] == '朝阳']
         self.textEdit.setText(str(df2))
         #调用SaveExcel函数，保存定向筛选结果到Excel
-        SaveExcel(df2,self.rButton2.isChecked())
+        #SaveExcel(df2,self.rButton2.isChecked())
 
     #多表合并
     def click4(self):
         global root
         # 合并指定文件夹下的所有Excel表
         filearray = []
-        filelocation = glob.glob(root+"\*.xls")
+        all_data = []
+        filelocation = glob.glob(root+"\*.xlsx")
         for filename in filelocation:
             filearray.append(filename)
-        res = pd.read_excel(filearray[0])
-        for i in range(1, len(filearray)):
-            A = pd.read_excel(filearray[i])
-            res = pd.concat([res, A], ignore_index=False, sort=True)
+        for file in filearray:
+            df = pd.read_excel(file, index_col=None, header=0)
+            all_data.append(df)
 
-        self.textEdit.setText(str(res.index))
-        # 调用SaveExcel函数，将合并后的数据保存到Excel
-        SaveExcel(res, self.rButton2.isChecked())
+            # 合并所有DataFrame
+        merged_df = pd.concat(all_data, ignore_index=True)
+        merged_df = merged_df.sort_values(by='价格(万元)', ascending=False)
+        # 保存到新的Excel文件
+        merged_df.to_excel("merged_output.xlsx", index=False)
 
     #多表统计排行
     def click5(self):
         global root
         # 合并Excel表格
         filearray = []
-        filelocation = glob.glob(root + "\*.xls")
+        all_data = []
+        filelocation = glob.glob(root + "\*.xlsx")
         for filename in filelocation:
             filearray.append(filename)
-        res = pd.read_excel(filearray[0])
-        for i in range(1, len(filearray)):
-            A = pd.read_excel(filearray[i])
-            res = pd.concat([res, A], ignore_index=False, sort=True)
-        # 分组统计排序
-        # 通过reset_index()函数将groupby()的分组结果转成DataFrame对象
-        df = res.groupby(["宝贝标题"])["宝贝总数量"].sum().reset_index()
-        df1 = df.sort_values(by='宝贝总数量', ascending=False)
-        self.textEdit.setText(str(df1))
-        # 调用SaveExcel函数，将统计排行结果保存到Excel
-        SaveExcel(df1, self.rButton2.isChecked())
+        for file in filearray:
+            df = pd.read_excel(file, index_col=None, header=0)
+            all_data.append(df)
+
+            # 合并所有DataFrame
+        merged_df = pd.concat(all_data, ignore_index=True)
+        merged_df = merged_df.sort_values(by='价格(万元)', ascending=False)
+        # 保存到新的Excel文件
+        merged_df.to_excel("merged_output.xlsx", index=False)
 
 
 
