@@ -1,24 +1,13 @@
-from PyQt5 import QtCore, QtGui
-from PyQt5 import QtWidgets
+import sys,os,glob
+import pandas as pd
+from PyQt5 import QtCore, QtGui,QtWidgets
 from PyQt5.QtWidgets import qApp,QFileDialog,QMessageBox
 
-import sys
-import pandas as pd
-import os
-import glob
-root=""
+root = ""
 fileNum = 0
-myrow=0
+myrow = 0
 
-def SaveExcel(df,isChecked):
-    # 将提取后的数据保存到Excel
-    if (isChecked):
-        writer = pd.ExcelWriter('mycell.xls')
-    else:
-        global temproot
-        writer = pd.ExcelWriter(temproot + '/mycell.xls')
-    df.to_excel(writer, 'sheet1')
-    writer.save()
+
 class Ui_MainWindow(QtWidgets.QWidget):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
