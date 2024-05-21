@@ -1,0 +1,33 @@
+import cv2
+
+# 视频文件路径
+video_path = 'your_video_file.mp4'
+
+# 创建一个VideoCapture对象
+cap = cv2.VideoCapture(video_path)
+
+# 检查是否成功打开视频文件
+if not cap.isOpened():
+    print("Error opening video stream or file")
+    exit()
+
+# 设置帧计数为0
+frame_count = 0
+
+# 逐帧读取视频
+while cap.isOpened():
+    ret, frame = cap.read()
+    if not ret:
+        break
+
+    # 如果读取的帧是第60帧，则保存为图片并退出循环
+    if frame_count == 59:  # 注意：计数从0开始，所以第60帧的计数是59
+        cv2.imwrite('frame_60.jpg', frame)
+        break
+
+    frame_count += 1
+
+# 释放VideoCapture对象
+cap.release()
+
+print("Frame 60 has been saved as 'frame_60.jpg'")
