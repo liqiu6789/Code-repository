@@ -1,0 +1,32 @@
+import nltk
+from nltk.corpus import words
+
+# 假设我们有一个简单的颜色词库
+color_words = set([word.lower() for word in ['red', 'blue', 'green', 'yellow', 'orange', 'purple', 'pink', 'brown', 'gray', 'white', 'black']])
+
+def extract_colors_and_adjectives(text):
+    # 标记和词性标注文本
+    tokens = nltk.word_tokenize(text)
+    tagged = nltk.pos_tag(tokens)
+    
+    colors = []
+    adjectives = []
+    
+    for word, pos in tagged:
+        word = word.lower()
+        
+        # 检查颜色
+        if word in color_words:
+            colors.append(word)
+        
+        # 检查形容词（这里使用了nltk的形容词词性标注）
+        if pos.startswith('JJ'):  # JJ 是形容词的词性标注
+            adjectives.append(word)
+    
+    return colors, adjectives
+
+# 示例段落
+text = "The red apple is very sweet and juicy. It has a green leaf and a brown stem."
+colors, adjectives = extract_colors_and_adjectives(text)
+print("Colors:", colors)
+print("Adjectives:", adjectives)
