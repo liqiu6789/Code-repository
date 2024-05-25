@@ -16,7 +16,7 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         super(MyMainWindow,self).__init__()
         self.setupUi(self)
         self.setGeometry(100, 100, 1024, 600)
-        self.setWindowTitle('Word助手')  # 设置窗体的标题
+        self.setWindowTitle('文档处理系统')  # 设置窗体的标题
         # 设置窗体背景
         palette = QtGui.QPalette()  # 创建调色板类的对象
         # 设置窗体背景自适应
