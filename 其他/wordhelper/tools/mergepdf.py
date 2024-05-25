@@ -3,7 +3,7 @@
    合并pdf文件，输出的pdf文件按输入的pdf文件名生成书签
 '''
 import os, sys, codecs
-from PyPDF2 import PdfFileReader, PdfFileMerger
+from PyPDF2 import PdfReader, PdfMerger
 import tools.common as common
 
 def mergefiles(path, output_filename, import_bookmarks=False):
@@ -11,19 +11,19 @@ def mergefiles(path, output_filename, import_bookmarks=False):
     书签名为之前的文件名。默认情况下原始文件的书签不会导入，使用import_bookmarks=True可以将原文件所带的书签也
     导入到输出的PDF文件中
     '''
-    merger = PdfFileMerger()
+    merger = PdfMerger()
     filelist = common.getfilenames(filepath=path,filelist_out=[], file_ext='.pdf')  # 获取要合并的PDF文件
     if len(filelist) == 0:
         print("当前目录及子目录下不存在pdf文件")
         sys.exit()
     for filename in filelist:
         f = codecs.open(filename, 'rb') # 使用codecs的open()方法打开文件时，会自动转换为内部Unicode编码
-        file_rd = PdfFileReader(f)
+        file_rd = PdfReader(f)
         short_filename = os.path.basename(os.path.splitext(filename)[0])
-        if file_rd.isEncrypted == True:
+        if file_rd.is_encrypted == True:
             print('不支持的加密文件：%s'%(filename))
             continue
-        merger.append(file_rd, bookmark=short_filename, import_bookmarks=import_bookmarks)
+        merger.append(file_rd, outline_item=short_filename, import_outline=import_bookmarks)
         f.close()  # 关闭文件对象
     out_filename=os.path.join(os.path.abspath(path), output_filename)  # 将文件名和路径连接为一个完整路径
     merger.write(out_filename)
