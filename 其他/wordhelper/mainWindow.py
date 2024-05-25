@@ -53,10 +53,10 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
-        self.actionWord_PDF.setText(_translate("MainWindow", "Word转PDF"))
+        self.actionWord_PDF.setText(_translate("MainWindow", "转为pdf文件"))
         self.actionWord_PDF.setToolTip(_translate("MainWindow", "<html><head/><body><p>Word转PDF</p></body></html>"))
-        self.action_Word.setText(_translate("MainWindow", "统计Word文档页码"))
+        self.action_Word.setText(_translate("MainWindow", "统计文档页数"))
         self.action_Word.setToolTip(_translate("MainWindow", "<html><head/><body><p>统计Word文档的总页码</p></body></html>"))
-        self.action_list.setText(_translate("MainWindow", "提取总目录"))
+        self.action_list.setText(_translate("MainWindow", "提取目录"))
         self.action_list.setToolTip(_translate("MainWindow", "<html><head/><body><p>提取Wrod文档总目录</p></body></html>"))
 
