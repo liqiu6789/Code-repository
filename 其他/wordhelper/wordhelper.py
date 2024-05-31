@@ -29,91 +29,90 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
 '''Word转PDF模块'''
 class TransformWindow(QMainWindow, Ui_TransformWindow):
     filelist = []
-    def __init__(self):
-        super(TransformWindow,self).__init__()
-        self.setupUi(self)
-        self.showLoding.setText("")  # 设置显示转换进度标签不显示内容
-        self.showLoding.setMinimumWidth(100)  # 设置Label标签的最小宽度
 
-        self.multipleExecute.clicked.connect( self.multipleExecuteClick)  #批量转换按钮绑定槽函数
-        self.singleExecute.clicked.connect(self.singleExecuteClick)  # 合为一个PDF按钮绑定槽函数
-        self.sourcebrowseButton.clicked.connect(self.sourcebrowseClick)   # 选择源文件夹按钮绑定槽函数
-        self.targetbrowseButton.clicked.connect(self.targetbrowseClick)   # 选择目标文件夹按钮绑定槽函数
-        self.listpdf.itemDoubleClicked.connect(self.itemdoubleClick)  # 为列表项的双击事件绑定槽函数
-    # 自定义打开子窗体的方法
+    def __init__(self):
+        super(TransformWindow, self).__init__()
+        self.setupUi(self)
+        self._setup_ui()
+        self._connect_signals()
+
+    def _setup_ui(self):
+        self.showLoding.setText("")
+        self.showLoding.setMinimumWidth(100)
+
+    def _connect_signals(self):
+        self.multipleExecute.clicked.connect(self.multipleExecuteClick)
+        self.singleExecute.clicked.connect(self.singleExecuteClick)
+        self.sourcebrowseButton.clicked.connect(self.sourcebrowseClick)
+        self.targetbrowseButton.clicked.connect(self.targetbrowseClick)
+        self.listpdf.itemDoubleClicked.connect(self.itemdoubleClick)
+
     def open(self):
         self.__init__()
-        self.show()  # 显示子窗体
-    def sourcebrowseClick(self):  # 单击浏览源文件夹按钮所触发的方法
-        # 打开选择文件夹的对话框
-        dir_path = QFileDialog.getExistingDirectory(self, "请选择源文件目录", r"E:\learn\test\doc")
-        if dir_path == "":  # 处理没有选择路径的情况，这里为直接返回
-            return
-        self.sourcepath.setText(dir_path)  # 将获取到的文件夹路径添加到文本框控件中
-        self.listword.clear()   # 清空列表
-        global filelist  # 定义全局变量
-        filelist = common.getfilenames(dir_path,[],'.doc')  # 获取Word文档路径
-        self.listword.addItems(filelist)  # 将获取到的Word文件路径添加到列表控件中
+        self.show()
 
-    def targetbrowseClick(self): # 单击浏览目标文件夹按钮所触发的方法
+    def sourcebrowseClick(self):
+        dir_path = QFileDialog.getExistingDirectory(self, "请选择源文件目录", r"E:\learn\test\doc")
+        if not dir_path:
+            return
+        self.sourcepath.setText(dir_path)
+        self.listword.clear()
+        global filelist
+        filelist = common.getfilenames(dir_path, [], '.doc')
+        self.listword.addItems(filelist)
+
+    def targetbrowseClick(self):
         dir_path = QFileDialog.getExistingDirectory(self, "请选择目标文件目录", r"E:\learn\test\pdf")
         self.targetpath.setText(dir_path)
 
-    def itemdoubleClick(self,item):  # 处理双击列表项触发的方法
+    def itemdoubleClick(self, item):
         if os.path.exists(item.text()):
-            os.startfile(item.text())  # 打开文件
+            os.startfile(item.text())
         else:
             QMessageBox.information(self, "温馨提示：", "不是有效的文件名！", QMessageBox.Yes)
 
-    def multipleExecuteClick(self):  #批量转换按钮触发的方法
-        # 判断是否选择了源文件，如果没有选择则弹出提示框告知
-        if self.listword.count() == 0:
-            QMessageBox.information(self, "温馨提示：", "没有要转换的Word文档！", QMessageBox.Yes)
+    def multipleExecuteClick(self):
+        if not self._validate_paths():
             return
-        targetpath = self.targetpath.text()  # 获取目标文件夹
-        # 判断是否选择了目标文件，如果没有选择则弹出提示框告知
-        if not os.path.exists(targetpath):
-            QMessageBox.information(self, "温馨提示：", "请选择正确的目标路径！", QMessageBox.Yes)
-            return
-        self.listpdf.clear()  # 清空结果列表
-        self.showLoding.setMovie(self.gif)  # 设置gif图片
-        self.gif.start()  # 启动图片，实现等待gif图片的显示
-        _thread.start_new_thread(self.mExecute, ())  # 开启新线程执行批量转PDF
+        self._start_conversion(self.mExecute)
 
-    # 实现批量Word转PDF操作的方法
-    def mExecute(self):
-        targetpath = self.targetpath.text()  # 获取目标文件夹
-        valueList = wordtopdf.wordtopdf(filelist,targetpath)  # 实现将Word文档批量转换为PDF
-        if(valueList != -1):
-            self.showLoding.clear()  # 清除进度条
-            self.listpdf.addItems(valueList)  # 将转换后的PDF路径显示在目标列表中
-
-    # 合为一个PDF按钮所触发的方法
     def singleExecuteClick(self):
-        # 判断是否选择了源文件，如果没有选择则弹出提示框告知
+        if not self._validate_paths():
+            return
+        self._start_conversion(self.sExecute)
+
+    def _validate_paths(self):
         if self.listword.count() == 0:
             QMessageBox.information(self, "温馨提示：", "没有要转换的Word文档！", QMessageBox.Yes)
-            return
-        # 判断是否选择了目标文件夹，如果没有选择则弹出提示框告知
+            return False
         if not os.path.exists(self.targetpath.text()):
             QMessageBox.information(self, "温馨提示：", "请选择正确的目标路径！", QMessageBox.Yes)
-            return
-        self.listpdf.clear()  # 清空结果列表
-        self.showLoding.setMovie(self.gif)  # 设置gif图片
-        self.gif.start()  # 启动图片，实现等待gif图片的显示
-        _thread.start_new_thread(self.sExecute,())  # 开启新线程执行多个Word合为一个PDF
+            return False
+        return True
 
-    # 实现合为一个PDF文件操作的方法
+    def _start_conversion(self, target_method):
+        self.listpdf.clear()
+        self.showLoding.setMovie(self.gif)
+        self.gif.start()
+        _thread.start_new_thread(target_method, ())
+
+    def mExecute(self):
+        targetpath = self.targetpath.text()
+        valueList = wordtopdf.wordtopdf(filelist, targetpath)
+        if valueList != -1:
+            self.showLoding.clear()
+            self.listpdf.addItems(valueList)
+
     def sExecute(self):
-        targetpath = self.targetpath.text()  # 获取目标路径
-        valueList = wordtopdf.wordtopdf(filelist, targetpath)  # 将多个Word文档转换为PDF文件
-        if(valueList != -1):
-            mergepdf.mergefiles(targetpath, 'merged.pdf', True) # 将多个PDF文件合并为一个PDF文件
-            self.showLoding.clear()  # 清除进度条
-            temp = [os.path.join(targetpath , 'merged.pdf')] # 组合PDF文件路径
-            self.listpdf.addItems( temp)  # 将PDF文件路径显示到结果列表中
-            for file in valueList: # 遍历临时生成的PDF文件列表
-                os.remove(file)  # 删除PDF文件
+        targetpath = self.targetpath.text()
+        valueList = wordtopdf.wordtopdf(filelist, targetpath)
+        if valueList != -1:
+            mergepdf.mergefiles(targetpath, 'merged.pdf', True)
+            self.showLoding.clear()
+            self.listpdf.addItems([os.path.join(targetpath, 'merged.pdf')])
+            for file in valueList:
+                os.remove(file)
+
 
 '''统计Word文档页码模块'''
 class PageWindow(QMainWindow, Ui_PageWindow):
