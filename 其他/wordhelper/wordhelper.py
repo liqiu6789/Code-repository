@@ -92,7 +92,7 @@ class TransformWindow(QMainWindow, Ui_TransformWindow):
         self.showLoding.setText("")
         self.showLoding.setMinimumWidth(100)
         self.multipleExecute.clicked.connect(self.multipleExecuteClick)
-        self.singleExecute.clicked.connect(self.singleExecuteClick)
+        # self.singleExecute.clicked.connect(self.singleExecuteClick)
         self.sourcebrowseButton.clicked.connect(self.sourcebrowseClick)
         self.targetbrowseButton.clicked.connect(self.targetbrowseClick)
         self.listpdf.itemDoubleClicked.connect(self.itemdoubleClick)
@@ -126,6 +126,7 @@ class TransformWindow(QMainWindow, Ui_TransformWindow):
 
     def singleExecuteClick(self):
         if self._validate_paths():
+            pass
             self._start_conversion(self.sExecute)
 
     def _validate_paths(self):
@@ -139,8 +140,8 @@ class TransformWindow(QMainWindow, Ui_TransformWindow):
 
     def _start_conversion(self, target_method):
         self.listpdf.clear()
-        self.showLoding.setMovie(self.gif)
-        self.gif.start()
+        #self.showLoding.setMovie(self.gif)
+        #self.gif.start()
         _thread.start_new_thread(target_method, ())
 
     def mExecute(self):
