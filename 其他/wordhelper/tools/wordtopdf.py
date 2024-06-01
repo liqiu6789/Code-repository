@@ -110,7 +110,7 @@ def getPdfOutlines(pdfpath,listpath,isList):
     print("提取目录")
     with open(pdfpath, "rb") as file:
         doc = PdfReader(file)
-        outlines = doc.getOutlines()  # 获取大纲
+        outlines = doc.outline  # 获取大纲
         global returnlist  # 全局变量，保存大纲的列表
         returnlist = []   # 创建一个空列表
         mylist = getOutline(outlines,isList)  # 递归获取大纲

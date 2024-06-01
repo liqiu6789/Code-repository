@@ -203,9 +203,9 @@ class PageWindow(QMainWindow, Ui_PageWindow):
 
     def _start_processing(self):
         self.totalpage.setText("")
-        self.totalpage.setMovie(self.gif)
+        # self.totalpage.setMovie(self.gif)
         self.label_2.setText("正在统计：")
-        self.gif.start()
+        #self.gif.start()
         _thread.start_new_thread(self.execute, ())
 
     def execute(self):
@@ -247,8 +247,8 @@ class ListWindow(QMainWindow, Ui_ListWindow):
             QMessageBox.information(self, "温馨提示：", "没有要提取目录的Word文档！", QMessageBox.Yes)
             return
         self.listfile.setText("")
-        self.listfile.setMovie(self.gif)
-        self.gif.start()
+        # self.listfile.setMovie(self.gif)
+        # self.gif.start()
         _thread.start_new_thread(self.getList, ())
 
     def getList(self):
