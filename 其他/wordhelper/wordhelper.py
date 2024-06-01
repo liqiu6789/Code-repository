@@ -6,9 +6,9 @@ import _thread
 import tools.common as common
 import tools.wordtopdf as wordtopdf
 import tools.mergepdf as mergepdf
-from mainWindow import Ui_MainWindow
-from pageWindow import Ui_PageWindow
-from listWindow import Ui_ListWindow
+from win_three import Ui_MainWindow
+from win_three import Ui_PageWindow
+from win_three import Ui_ListWindow
 from transformWindow import Ui_TransformWindow
 
 class MyMainWindow(QMainWindow, Ui_MainWindow):
