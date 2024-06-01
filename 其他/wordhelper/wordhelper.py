@@ -17,14 +17,12 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.setGeometry(100, 100, 1024, 600)
         self.setWindowTitle('文档处理系统')
-
         self.centralWidget = QWidget(self)
         self.setCentralWidget(self.centralWidget)
-
         # Create buttons
-        self.wordPdfButton = QPushButton('Word to PDF', self)
-        self.pageCountButton = QPushButton('Count Pages', self)
-        self.extractListButton = QPushButton('Extract List', self)
+        self.wordPdfButton = QPushButton('转为pdf文件', self)
+        self.pageCountButton = QPushButton('统计文档页数', self)
+        self.extractListButton = QPushButton('提取文档目录', self)
 
         # Connect buttons to methods
         self.wordPdfButton.clicked.connect(self.openTransformWindow)
@@ -246,16 +244,9 @@ class ListWindow(QMainWindow, Ui_ListWindow):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     main = MyMainWindow()
-    qmovie = QMovie('image/loding.gif')
-
     transformWindow = TransformWindow()
-    transformWindow.gif = qmovie
-
     pagewindow = PageWindow()
-    pagewindow.gif = qmovie
-
     listwindow = ListWindow()
-    listwindow.gif = qmovie
 
     main.show()
     sys.exit(app.exec_())
