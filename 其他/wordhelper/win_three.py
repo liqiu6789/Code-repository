@@ -1,13 +1,19 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_ListWindow(object):
     def setupUi(self, ListWindow):
         ListWindow.setObjectName("ListWindow")
         ListWindow.resize(800, 588)
+        ListWindow.setStyleSheet("background-color: lightblue;")
+
         self.centralwidget = QtWidgets.QWidget(ListWindow)
         self.centralwidget.setObjectName("centralwidget")
 
+        # Setup layouts
         self._setup_layouts()
+        # Setup widgets
         self._setup_widgets()
 
         ListWindow.setCentralWidget(self.centralwidget)
@@ -23,11 +29,19 @@ class Ui_ListWindow(object):
         QtCore.QMetaObject.connectSlotsByName(ListWindow)
 
     def _setup_layouts(self):
-        self.horizontalLayout_3 = self._create_hbox_layout(self.centralwidget, 20, 443, 761, 31)
-        self.groupBox = self._create_group_box(self.centralwidget, 20, 10, 761, 431)
-        self.horizontalLayout = self._create_hbox_layout(self.groupBox, 20, 20, 721, 31)
-        self.groupBox_2 = self._create_group_box(self.centralwidget, 20, 470, 761, 81)
-        self.horizontalLayout_2 = self._create_hbox_layout(self.groupBox_2, 20, 30, 721, 31)
+        self.verticalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(20, 10, 761, 571))
+        self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
+
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout.setObjectName("verticalLayout")
+
+        self.horizontalLayout_3 = self._create_hbox_layout(self.verticalLayoutWidget)
+        self.groupBox = self._create_group_box(self.verticalLayoutWidget)
+        self.horizontalLayout = self._create_hbox_layout(self.groupBox)
+        self.groupBox_2 = self._create_group_box(self.verticalLayoutWidget)
+        self.horizontalLayout_2 = self._create_hbox_layout(self.groupBox_2)
 
     def _setup_widgets(self):
         self.checkBox = self._create_check_box(self.horizontalLayout_3, "checkBox")
@@ -35,21 +49,22 @@ class Ui_ListWindow(object):
         self.label = self._create_label(self.horizontalLayout, "label")
         self.sourcepath = self._create_line_edit(self.horizontalLayout, "sourcepath")
         self.browseButton = self._create_tool_button(self.horizontalLayout, "browseButton")
-        self.listword = self._create_list_widget(self.groupBox, 20, 70, 721, 341, "listword")
+        self.listword = self._create_list_widget(self.groupBox, "listword")
         self.label_2 = self._create_label(self.horizontalLayout_2, "label_2")
         self.listfile = self._create_label(self.horizontalLayout_2, "listfile")
         self.openButton = self._create_push_button(self.horizontalLayout_2, "openButton")
 
-    def _create_hbox_layout(self, parent, x, y, width, height):
-        widget = QtWidgets.QWidget(parent)
-        widget.setGeometry(QtCore.QRect(x, y, width, height))
-        layout = QtWidgets.QHBoxLayout(widget)
+        self.verticalLayout.addLayout(self.horizontalLayout_3)
+        self.verticalLayout.addWidget(self.groupBox)
+        self.verticalLayout.addWidget(self.groupBox_2)
+
+    def _create_hbox_layout(self, parent):
+        layout = QtWidgets.QHBoxLayout(parent)
         layout.setContentsMargins(0, 0, 0, 0)
         return layout
 
-    def _create_group_box(self, parent, x, y, width, height):
+    def _create_group_box(self, parent):
         group_box = QtWidgets.QGroupBox(parent)
-        group_box.setGeometry(QtCore.QRect(x, y, width, height))
         return group_box
 
     def _create_check_box(self, layout, name):
@@ -82,9 +97,8 @@ class Ui_ListWindow(object):
         layout.addWidget(tool_button)
         return tool_button
 
-    def _create_list_widget(self, parent, x, y, width, height, name):
+    def _create_list_widget(self, parent, name):
         list_widget = QtWidgets.QListWidget(parent)
-        list_widget.setGeometry(QtCore.QRect(x, y, width, height))
         list_widget.setObjectName(name)
         return list_widget
 
@@ -101,7 +115,8 @@ class Ui_ListWindow(object):
         self.listfile.setText(_translate("ListWindow", "还未提取..."))
         self.openButton.setText(_translate("ListWindow", "打开文件"))
 
-from PyQt5 import QtCore, QtWidgets
+
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -123,19 +138,23 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
 
 
+from PyQt5 import QtCore, QtGui, QtWidgets
+
+
 class Ui_PageWindow(object):
     def setupUi(self, PageWindow):
         PageWindow.setObjectName("PageWindow")
         PageWindow.resize(792, 676)
+        PageWindow.setStyleSheet("background-color: lightblue;")
+
         self.centralwidget = QtWidgets.QWidget(PageWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.groupBox = self._create_group_box(self.centralwidget, 20, 10, 761, 281, "groupBox")
-        self.horizontalLayout = self._create_hbox_layout(self.groupBox, 20, 20, 721, 31)
-        self._setup_source_widgets()
-        self.groupBox_2 = self._create_group_box(self.centralwidget, 20, 320, 761, 321, "groupBox_2")
-        self._setup_result_table()
-        self.horizontalLayout_2 = self._create_hbox_layout(self.groupBox_2, 20, 280, 721, 31)
-        self._setup_result_widgets()
+
+        # Setup layouts and widgets
+        self._setup_main_layout()
+        self._setup_source_group()
+        self._setup_result_group()
+
         PageWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(PageWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 792, 23))
@@ -144,69 +163,86 @@ class Ui_PageWindow(object):
         self.statusbar = QtWidgets.QStatusBar(PageWindow)
         self.statusbar.setObjectName("statusbar")
         PageWindow.setStatusBar(self.statusbar)
+
         self.retranslateUi(PageWindow)
         QtCore.QMetaObject.connectSlotsByName(PageWindow)
 
-    def _setup_source_widgets(self):
-        self.label = self._create_label(self.horizontalLayout, "label")
-        self.sourcepath = self._create_line_edit(self.horizontalLayout, "sourcepath")
-        self.browseButton = self._create_tool_button(self.horizontalLayout, "browseButton")
+    def _setup_main_layout(self):
+        self.verticalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(20, 10, 761, 631))
+        self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
+
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout.setObjectName("verticalLayout")
+
+    def _setup_source_group(self):
+        self.groupBox = QtWidgets.QGroupBox(self.verticalLayoutWidget)
+        self.groupBox.setObjectName("groupBox")
+
+        self.verticalLayout.addWidget(self.groupBox)
+
+        self.sourceLayout = QtWidgets.QVBoxLayout(self.groupBox)
+        self.sourceLayout.setContentsMargins(20, 20, 20, 20)
+        self.sourceLayout.setObjectName("sourceLayout")
+
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
+
+        self.label = QtWidgets.QLabel(self.groupBox)
+        self.label.setObjectName("label")
+        self.horizontalLayout.addWidget(self.label)
+
+        self.sourcepath = QtWidgets.QLineEdit(self.groupBox)
+        self.sourcepath.setObjectName("sourcepath")
+        self.horizontalLayout.addWidget(self.sourcepath)
+
+        self.browseButton = QtWidgets.QToolButton(self.groupBox)
+        self.browseButton.setObjectName("browseButton")
+        self.horizontalLayout.addWidget(self.browseButton)
+
+        self.sourceLayout.addLayout(self.horizontalLayout)
+
         self.listword = QtWidgets.QListWidget(self.groupBox)
-        self.listword.setGeometry(QtCore.QRect(20, 70, 721, 192))
         self.listword.setObjectName("listword")
+        self.sourceLayout.addWidget(self.listword)
 
-    def _setup_result_table(self):
+    def _setup_result_group(self):
+        self.groupBox_2 = QtWidgets.QGroupBox(self.verticalLayoutWidget)
+        self.groupBox_2.setObjectName("groupBox_2")
+
+        self.verticalLayout.addWidget(self.groupBox_2)
+
+        self.resultLayout = QtWidgets.QVBoxLayout(self.groupBox_2)
+        self.resultLayout.setContentsMargins(20, 20, 20, 20)
+        self.resultLayout.setObjectName("resultLayout")
+
         self.pagetable = QtWidgets.QTableWidget(self.groupBox_2)
-        self.pagetable.setGeometry(QtCore.QRect(20, 30, 721, 241))
-        self.pagetable.setRowCount(1)
+        self.pagetable.setObjectName("pagetable")
         self.pagetable.setColumnCount(2)
-        self.pagetable.setHorizontalHeaderItem(0, QtWidgets.QTableWidgetItem("文件名"))
-        self.pagetable.setHorizontalHeaderItem(1, QtWidgets.QTableWidgetItem("页码"))
-        self.pagetable.horizontalHeader().setDefaultSectionSize(101)
-        self.pagetable.setItem(0, 0, QtWidgets.QTableWidgetItem())
-        self.pagetable.setItem(0, 1, QtWidgets.QTableWidgetItem())
+        self.pagetable.setHorizontalHeaderItem(0, QtWidgets.QTableWidgetItem())
+        self.pagetable.setHorizontalHeaderItem(1, QtWidgets.QTableWidgetItem())
+        self.resultLayout.addWidget(self.pagetable)
 
-    def _setup_result_widgets(self):
-        self.label_2 = self._create_label(self.horizontalLayout_2, "label_2")
-        self.totalpage = QtWidgets.QLabel(self.horizontalLayout_2.parentWidget())
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+
+        self.label_2 = QtWidgets.QLabel(self.groupBox_2)
+        self.label_2.setObjectName("label_2")
+        self.horizontalLayout_2.addWidget(self.label_2)
+
+        self.totalpage = QtWidgets.QLabel(self.groupBox_2)
         self.totalpage.setObjectName("totalpage")
         self.horizontalLayout_2.addWidget(self.totalpage)
+
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem)
-        self.executeButton = QtWidgets.QPushButton(self.horizontalLayout_2.parentWidget())
+
+        self.executeButton = QtWidgets.QPushButton(self.groupBox_2)
         self.executeButton.setObjectName("executeButton")
         self.horizontalLayout_2.addWidget(self.executeButton)
 
-    def _create_hbox_layout(self, parent, x, y, width, height):
-        widget = QtWidgets.QWidget(parent)
-        widget.setGeometry(QtCore.QRect(x, y, width, height))
-        layout = QtWidgets.QHBoxLayout(widget)
-        layout.setContentsMargins(0, 0, 0, 0)
-        return layout
-
-    def _create_group_box(self, parent, x, y, width, height, name):
-        group_box = QtWidgets.QGroupBox(parent)
-        group_box.setGeometry(QtCore.QRect(x, y, width, height))
-        group_box.setObjectName(name)
-        return group_box
-
-    def _create_label(self, layout, name):
-        label = QtWidgets.QLabel(layout.parentWidget())
-        label.setObjectName(name)
-        layout.addWidget(label)
-        return label
-
-    def _create_line_edit(self, layout, name):
-        line_edit = QtWidgets.QLineEdit(layout.parentWidget())
-        line_edit.setObjectName(name)
-        layout.addWidget(line_edit)
-        return line_edit
-
-    def _create_tool_button(self, layout, name):
-        tool_button = QtWidgets.QToolButton(layout.parentWidget())
-        tool_button.setObjectName(name)
-        layout.addWidget(tool_button)
-        return tool_button
+        self.resultLayout.addLayout(self.horizontalLayout_2)
 
     def retranslateUi(self, PageWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -215,6 +251,9 @@ class Ui_PageWindow(object):
         self.label.setText(_translate("PageWindow", "请选择Word文档所在目录："))
         self.browseButton.setText(_translate("PageWindow", "..."))
         self.groupBox_2.setTitle(_translate("PageWindow", "结果"))
+        self.pagetable.horizontalHeaderItem(0).setText(_translate("PageWindow", "文件名"))
+        self.pagetable.horizontalHeaderItem(1).setText(_translate("PageWindow", "页码"))
         self.label_2.setText(_translate("PageWindow", "合计页码："))
         self.totalpage.setText(_translate("PageWindow", "未统计"))
         self.executeButton.setText(_translate("PageWindow", "开始统计"))
+

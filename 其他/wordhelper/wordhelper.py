@@ -50,20 +50,15 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         self.setWindowTitle('文档处理系统')
         self.centralWidget = QWidget(self)
         self.setCentralWidget(self.centralWidget)
-
+        self.setStyleSheet("background-color: lightblue;")
         # Create buttons
         self.wordPdfButton = ButtonImage('转为pdf文件', "pdf文件.png")
         self.pageCountButton = ButtonImage('统计文档页数', "页数.png")
         self.extractListButton = ButtonImage('提取文档目录', "目录.png")
-
-
         # Set icon size
         self.wordPdfButton.setFixedSize(200, 200)
         self.pageCountButton.setFixedSize(200, 200)
         self.extractListButton.setFixedSize(200, 200)
-
-
-
         # Connect buttons to methods
         self.wordPdfButton.clicked.connect(self.openTransformWindow)
         self.pageCountButton.clicked.connect(self.openPageWindow)
