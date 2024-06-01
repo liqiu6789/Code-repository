@@ -1,7 +1,6 @@
 import sys
-from PyQt5.QtGui import QColor, QMovie, QPixmap, QBrush, QPalette
-from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QTableWidgetItem, QTableWidget, QMessageBox
-from PyQt5 import QtCore
+from PyQt5.QtGui import QColor, QMovie
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QTableWidgetItem, QTableWidget, QMessageBox, QPushButton, QHBoxLayout, QWidget, QVBoxLayout
 import os
 import _thread
 import tools.common as common
@@ -18,12 +17,40 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.setGeometry(100, 100, 1024, 600)
         self.setWindowTitle('文档处理系统')
-        palette = QPalette()
-        palette.setBrush(self.backgroundRole(), QBrush(
-            QPixmap("./image/bg.png").scaled(self.size(), QtCore.Qt.IgnoreAspectRatio, QtCore.Qt.SmoothTransformation)))
-        self.setPalette(palette)
-        self.setAutoFillBackground(True)
-        self.setFixedSize(1024, 600)
+
+        self.centralWidget = QWidget(self)
+        self.setCentralWidget(self.centralWidget)
+
+        # Create buttons
+        self.wordPdfButton = QPushButton('Word to PDF', self)
+        self.pageCountButton = QPushButton('Count Pages', self)
+        self.extractListButton = QPushButton('Extract List', self)
+
+        # Connect buttons to methods
+        self.wordPdfButton.clicked.connect(self.openTransformWindow)
+        self.pageCountButton.clicked.connect(self.openPageWindow)
+        self.extractListButton.clicked.connect(self.openListWindow)
+
+        # Layout buttons horizontally
+        self.buttonLayout = QHBoxLayout()
+        self.buttonLayout.addWidget(self.wordPdfButton)
+        self.buttonLayout.addWidget(self.pageCountButton)
+        self.buttonLayout.addWidget(self.extractListButton)
+
+        # Center layout
+        self.mainLayout = QVBoxLayout(self.centralWidget)
+        self.mainLayout.addStretch()
+        self.mainLayout.addLayout(self.buttonLayout)
+        self.mainLayout.addStretch()
+
+    def openTransformWindow(self):
+        transformWindow.open()
+
+    def openPageWindow(self):
+        pagewindow.open()
+
+    def openListWindow(self):
+        listwindow.open()
 
 class TransformWindow(QMainWindow, Ui_TransformWindow):
     def __init__(self):
@@ -223,16 +250,12 @@ if __name__ == '__main__':
 
     transformWindow = TransformWindow()
     transformWindow.gif = qmovie
-    main.actionWord_PDF.triggered.connect(transformWindow.open)
 
     pagewindow = PageWindow()
     pagewindow.gif = qmovie
-    main.action_Word.triggered.connect(pagewindow.open)
 
     listwindow = ListWindow()
     listwindow.gif = qmovie
-    main.action_list.triggered.connect(listwindow.open)
 
     main.show()
     sys.exit(app.exec_())
-
