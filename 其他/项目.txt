@@ -1,16 +1,16 @@
 学生信息管理系统 pyqt
-word助手
-excel数据分析师
 联系人管理
 音乐网站 django
 留言板 django
 母婴商城 django
 已写：
+基于Python开发的文档处理系统
 基于Python的云盘数据清洗系统
 基于Python和OpenCV的证件照处理系统
 基于OpenCV开发的人脸识别考勤系统
 基于Python开发的人脸识别网页端通信系统
-基于Python开发的词云图生成器
+基于Python开发的词云图生成软件
 基于Python开发的艺术画板
 基于Python开发的批量图片处理系统
 基于Django开发的个人博客系统
+基于Python开发的Excel处理系统
