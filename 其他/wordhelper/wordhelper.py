@@ -283,6 +283,5 @@ if __name__ == '__main__':
     transformWindow = TransformWindow()
     pagewindow = PageWindow()
     listwindow = ListWindow()
-
     main.show()
     sys.exit(app.exec_())
