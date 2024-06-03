@@ -1,0 +1,57 @@
+import os
+import multiprocessing
+from moviepy.editor import VideoFileClip
+import GPUtil
+
+def process_video(input_path, output_path, gpu_id):
+    """
+    处理单个视频文件：这里我们将视频文件转码为 MP4 格式
+    """
+    try:
+        # 设置 GPU 环境变量，以便每个进程使用指定的 GPU
+        os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
+        
+        with VideoFileClip(input_path) as video:
+            video.write_videofile(output_path, codec='libx264', audio_codec='aac')
+        
+        print(f"Processed {input_path} successfully on GPU {gpu_id}.")
+    except Exception as e:
+        print(f"Failed to process {input_path}: {e}")
+
+def process_videos_in_folder(input_folder, output_folder):
+    """
+    使用多进程处理视频文件夹中的所有视频，进程数量与 GPU 数量相同
+    """
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder)
+
+    # 获取所有视频文件
+    video_files = [f for f in os.listdir(input_folder) if f.endswith(('.mp4', '.avi', '.mov', '.mkv'))]
+    print(f"Found {len(video_files)} video files to process.")
+
+    # 获取可用 GPU 的数量
+    gpus = GPUtil.getGPUs()
+    num_gpus = len(gpus)
+    print(f"Found {num_gpus} GPUs available.")
+
+    # 创建多进程池，进程数量等于 GPU 数量
+    pool = multiprocessing.Pool(processes=num_gpus)
+
+    jobs = []
+    for idx, video_file in enumerate(video_files):
+        input_path = os.path.join(input_folder, video_file)
+        output_path = os.path.join(output_folder, os.path.splitext(video_file)[0] + '.mp4')
+        gpu_id = idx % num_gpus  # 分配 GPU ID
+        jobs.append(pool.apply_async(process_video, (input_path, output_path, gpu_id)))
+
+    # 等待所有进程完成
+    for job in jobs:
+        job.get()
+
+    pool.close()
+    pool.join()
+
+if __name__ == "__main__":
+    input_folder = 'path_to_input_videos'  # 输入视频文件夹路径
+    output_folder = 'path_to_output_videos'  # 输出视频文件夹路径
+    process_videos_in_folder(input_folder, output_folder)
