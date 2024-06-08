@@ -10,7 +10,7 @@ class Dialog(QtWidgets.QWidget):
 
         self.setGeometry(150, 150, 700, 500)
         self.win = win
-
+        self.setWindowTitle('基于Python开发的通讯录管理系统')
         self.mainLayout = QtWidgets.QVBoxLayout()
         self.topLayout = QtWidgets.QHBoxLayout()
         self.middleLayout = QtWidgets.QHBoxLayout()
