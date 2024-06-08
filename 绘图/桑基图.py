@@ -8,6 +8,11 @@ sources = [0, 1, 2, 3, 4, 0, 1, 1, 2, 3, 4, 0, 1, 2, 3, 4]
 targets = [5, 5, 5, 5, 5, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 8]
 values = [10, 15, 5, 10, 7, 8, 10, 5, 12, 5, 3, 10, 8, 7, 3, 2]
 
+# 定义链接颜色
+link_colors = ["#FF5733", "#33FF57", "#3357FF", "#F333FF", "#FF33A6",
+               "#FFBD33", "#33FFBD", "#FF5733", "#57FF33", "#5733FF",
+               "#F333FF", "#FF5733", "#33FF57", "#3357FF", "#F333FF", "#FF33A6"]
+
 # 创建桑基图
 fig = go.Figure(go.Sankey(
     node=dict(
@@ -20,6 +25,7 @@ fig = go.Figure(go.Sankey(
         source=sources,  # 源节点
         target=targets,  # 目标节点
         value=values,  # 流量值
+        color=link_colors  # 链接颜色
     )
 ))
 
