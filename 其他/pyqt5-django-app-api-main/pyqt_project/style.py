@@ -62,7 +62,7 @@ def log_button():
 def top_layout_home():
     return """
     QFrame{
-    background-color: #37474F;
+    background-color: #00BFFF;
     border-radius: 8%;
     }
 
