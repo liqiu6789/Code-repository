@@ -93,13 +93,13 @@ def add_contact_layout():
     return """
     QGroupBox{
     border-radius: 7%;
-    background-color: #37474F;
+    background-color: #00FFFF;
     }
 
     QLineEdit{
     border: none;
     border-bottom: 1px solid #B0BEC5;
-    background-color: #37474F;
+    background-color: #FFFFFF;
     }
     """
 
