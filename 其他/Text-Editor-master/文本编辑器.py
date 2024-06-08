@@ -1,73 +1,49 @@
 import tkinter as tk
-from tkinter import ttk, colorchooser, filedialog, messagebox,font
+from tkinter import ttk, colorchooser, filedialog, messagebox, font
 import os
 
+def create_toolbar_button(parent, image_path, row, column, command=None):
+    icon = tk.PhotoImage(file=image_path)
+    btn = ttk.Button(parent, image=icon, command=command)
+    btn.image = icon  # 保持引用，防止图像被垃圾回收
+    btn.grid(row=row, column=column, padx=5)
+    return btn
+
+def create_menu_command(menu, label, icon, accelerator, command):
+    menu.add_command(label=label, image=icon, compound=tk.LEFT, accelerator=accelerator, command=command)
 
 main_application = tk.Tk()
 main_application.geometry('1200x600')
 main_application.title("基于Python开发的文本编辑器")
 
 main_menu = tk.Menu()
-
 file = tk.Menu(main_menu, tearoff=False)
 edit = tk.Menu(main_menu, tearoff=False)
 view = tk.Menu(main_menu, tearoff=False)
+color_theme = tk.Menu(main_menu, tearoff=False)
+
+main_menu.add_cascade(label="文件", menu=file)
+main_menu.add_cascade(label="编辑", menu=edit)
+main_menu.add_cascade(label="视图", menu=view)
+main_menu.add_cascade(label="主题", menu=color_theme)
 
 icon_paths = [
-    "icons2/new.png",
-    "icons2/open.png",
-    "icons2/save.png",
-    "icons2/save_as.png",
-    "icons2/exit.png",
-    "icons2/copy.png",
-    "icons2/paste.png",
-    "icons2/cut.png",
-    "icons2/clear_all.png",
-    "icons2/find.png",
-    "icons2/tool_bar.png",
-    "icons2/status_bar.png",
-    "icons2/light_default.png",
-    "icons2/light_plus.png",
-    "icons2/dark.png",
-    "icons2/red.png",
-    "icons2/monokai.png",
-    "icons2/night_blue.png"
+    "icons2/new.png", "icons2/open.png", "icons2/save.png", "icons2/save_as.png", "icons2/exit.png",
+    "icons2/copy.png", "icons2/paste.png", "icons2/cut.png", "icons2/clear_all.png", "icons2/find.png",
+    "icons2/tool_bar.png", "icons2/status_bar.png", "icons2/light_default.png", "icons2/light_plus.png",
+    "icons2/dark.png", "icons2/red.png", "icons2/monokai.png", "icons2/night_blue.png"
 ]
 
 icons = [tk.PhotoImage(file=path) for path in icon_paths]
 
 (
-    new_icon,
-    open_icon,
-    save_icon,
-    save_as_icon,
-    exit_icon,
-    copy_icon,
-    paste_icon,
-    cut_icon,
-    clear_all_icon,
-    find_icon,
-    tool_bar_icon,
-    status_bar_icon,
-    light_default_icon,
-    light_plus_icon,
-    dark_icon,
-    red_icon,
-    monokai_icon,
-    night_blue_icon
+    new_icon, open_icon, save_icon, save_as_icon, exit_icon,
+    copy_icon, paste_icon, cut_icon, clear_all_icon, find_icon,
+    tool_bar_icon, status_bar_icon, light_default_icon, light_plus_icon,
+    dark_icon, red_icon, monokai_icon, night_blue_icon
 ) = icons
 
-color_icons = (
-    light_default_icon,
-    light_plus_icon,
-    dark_icon,
-    red_icon,
-    monokai_icon,
-    night_blue_icon
-)
-
-color_theme = tk.Menu(main_menu, tearoff=False)
-
+color_icons = (light_default_icon, light_plus_icon, dark_icon, red_icon, monokai_icon, night_blue_icon)
 theme_choice = tk.StringVar()
 
 color_dict = {
@@ -78,11 +54,6 @@ color_dict = {
     "Monokai": ("#d3b774", "#474747"),
     "Night Blue": ("#ededed", "#6b9dc2")
 }
-
-main_menu.add_cascade(label="文件", menu=file)
-main_menu.add_cascade(label="编辑", menu=edit)
-main_menu.add_cascade(label="视图", menu=view)
-main_menu.add_cascade(label="主题", menu=color_theme)
 
 tool_bar = ttk.Label(main_application)
 tool_bar.pack(side=tk.TOP, fill=tk.X)
@@ -100,43 +71,23 @@ font_size["values"] = tuple(range(8, 80, 2))
 font_size.current(3)
 font_size.grid(row=0, column=1, padx=5)
 
-bold_icon = tk.PhotoImage(file="icons2/bold.png")
-bold_btn = ttk.Button(tool_bar, image=bold_icon)
-bold_btn.grid(row=0, column=2, padx=5)
+button_configs = [
+    ("icons2/bold.png", 0, 2, None),
+    ("icons2/italic.png", 0, 3, None),
+    ("icons2/underline.png", 0, 4, None),
+    ("icons2/font_color.png", 0, 5, None),
+    ("icons2/align_left.png", 0, 6, None),
+    ("icons2/align_center.png", 0, 7, None),
+    ("icons2/align_right.png", 0, 8, None)
+]
 
-italic_icon = tk.PhotoImage(file="icons2/italic.png")
-italic_btn = ttk.Button(tool_bar, image=italic_icon)
-italic_btn.grid(row=0, column=3, padx=5)
+buttons = [create_toolbar_button(tool_bar, *config) for config in button_configs]
 
-underline_icon = tk.PhotoImage(file="icons2/underline.png")
-underline_btn = ttk.Button(tool_bar, image=underline_icon)
-underline_btn.grid(row=0, column=4, padx=5)
-
-font_color_icon = tk.PhotoImage(file="icons2/font_color.png")
-font_color_btn = ttk.Button(tool_bar, image=font_color_icon)
-font_color_btn.grid(row=0, column=5, padx=5)
-
-align_left_icon = tk.PhotoImage(file="icons2/align_left.png")
-align_left_btn = ttk.Button(tool_bar, image=align_left_icon)
-align_left_btn.grid(row=0, column=6, padx=5)
-
-align_center_icon = tk.PhotoImage(file="icons2/align_center.png")
-align_center_btn = ttk.Button(tool_bar, image=align_center_icon)
-align_center_btn.grid(row=0, column=7, padx=5)
-
-align_right_icon = tk.PhotoImage(file="icons2/align_right.png")
-align_right_btn = ttk.Button(tool_bar, image=align_right_icon)
-align_right_btn.grid(row=0, column=8, padx=5)
-
-
-
-text_editor = tk.Text(main_application)
-text_editor.config(wrap="word", relief=tk.FLAT)
+text_editor = tk.Text(main_application, wrap="word", relief=tk.FLAT)
+text_editor.pack(fill=tk.BOTH, expand=True)
 
 scroll_bar = tk.Scrollbar(main_application)
-text_editor.focus_set()
 scroll_bar.pack(side=tk.RIGHT, fill=tk.Y)
-text_editor.pack(fill=tk.BOTH, expand=True)
 scroll_bar.config(command=text_editor.yview)
 text_editor.config(yscrollcommand=scroll_bar.set)
 
@@ -160,61 +111,45 @@ def change_bold():
     text_property = tk.font.Font(font=text_editor["font"])
     if text_property.actual()["weight"] == "normal":
         text_editor.config(font=(current_font_family, current_font_size, "bold"))
-    if text_property.actual()["weight"] == "bold":
+    elif text_property.actual()["weight"] == "bold":
         text_editor.config(font=(current_font_family, current_font_size, "normal"))
 
-bold_btn.configure(command=change_bold)
+buttons[0].configure(command=change_bold)
 
 def change_italic():
     text_property = tk.font.Font(font=text_editor["font"])
     if text_property.actual()["slant"] == "roman":
         text_editor.config(font=(current_font_family, current_font_size, "italic"))
-    if text_property.actual()["slant"] == "italic":
+    elif text_property.actual()["slant"] == "italic":
         text_editor.config(font=(current_font_family, current_font_size, "normal"))
 
-italic_btn.configure(command=change_italic)
+buttons[1].configure(command=change_italic)
 
 def change_underline():
     text_property = tk.font.Font(font=text_editor["font"])
     if text_property.actual()["underline"] == 0:
         text_editor.config(font=(current_font_family, current_font_size, "underline"))
-    if text_property.actual()["underline"] == 1:
+    elif text_property.actual()["underline"] == 1:
         text_editor.config(font=(current_font_family, current_font_size, "normal"))
 
-underline_btn.configure(command=change_underline)
+buttons[2].configure(command=change_underline)
 
 def change_font_color():
-    color_var = tk.colorchooser.askcolor()
-    text_editor.configure(fg=color_var[1])
+    color_var = tk.colorchooser.askcolor()[1]
+    if color_var:
+        text_editor.configure(fg=color_var)
 
-font_color_btn.configure(command=change_font_color)
+buttons[3].configure(command=change_font_color)
 
-def align_left():
+def align_text(align):
     text_content = text_editor.get(1.0, "end")
-    text_editor.tag_config("left", justify=tk.LEFT)
+    text_editor.tag_config(align, justify=align)
     text_editor.delete(1.0, tk.END)
-    text_editor.insert(tk.INSERT, text_content, "left")
+    text_editor.insert(tk.INSERT, text_content, align)
 
-align_left_btn.configure(command=align_left)
-
-def align_center():
-    text_content = text_editor.get(1.0, "end")
-    text_editor.tag_config("center", justify=tk.CENTER)
-    text_editor.delete(1.0, tk.END)
-    text_editor.insert(tk.INSERT, text_content, "center")
-
-align_center_btn.configure(command=align_center)
-
-def align_right():
-    text_content = text_editor.get(1.0, "end")
-    text_editor.tag_config("right", justify=tk.RIGHT)
-    text_editor.delete(1.0, tk.END)
-    text_editor.insert(tk.INSERT, text_content, "right")
-
-align_right_btn.configure(command=align_right)
-
-
-
+buttons[4].configure(command=lambda: align_text(tk.LEFT))
+buttons[5].configure(command=lambda: align_text(tk.CENTER))
+buttons[6].configure(command=lambda: align_text(tk.RIGHT))
 
 text_editor.configure(font=("Arial", 12))
 
@@ -229,7 +164,7 @@ def changed(event=None):
         text_changed = True
         words = len(text_editor.get(1.0, "end-1c").split())
         characters = len(text_editor.get(1.0, "end-1c"))
-        status_bar.config(text=f'字符数:{characters} 词数: {words}')
+        status_bar.config(text=f'字符数: {characters} 词数: {words}')
     text_editor.edit_modified(False)
 
 text_editor.bind("<<Modified>>", changed)
@@ -250,66 +185,52 @@ def open_file(event=None):
             text_editor.insert(1.0, fr.read())
     except FileNotFoundError:
         return
-    except:
-        return
+    except Exception as e:
+        messagebox.showerror("错误", f"无法打开文件: {e}")
     main_application.title(os.path.basename(url))
 
 def save_file(event=None):
     global url
     try:
         if url:
-            content = str(text_editor.get(1.0, tk.END))
+            content = text_editor.get(1.0, tk.END)
             with open(url, "w", encoding="utf-8") as fw:
                 fw.write(content)
         else:
-            url = filedialog.asksaveasfile(mode="w", defaultextension=".txt", filetypes=(("Text File", "*.txt"), ("All Files", "*.*")))
-            content2 = text_editor.get(1.0, tk.END)
-            url.write(content2)
-            url.close()
-    except:
-        return
-
-file.add_command(label="新建", image=new_icon, compound=tk.LEFT, accelerator="Ctrl+N", command=new_file)
-file.add_command(label="打开", image=open_icon, compound=tk.LEFT, accelerator="Ctrl+O", command=open_file)
-file.add_command(label="保存", image=save_icon, compound=tk.LEFT, accelerator="Ctrl+S", command=save_file)
+            save_as()
+    except Exception as e:
+        messagebox.showerror("错误", f"无法保存文件: {e}")
 
 def save_as(event=None):
     global url
     try:
         content = text_editor.get(1.0, tk.END)
-        url = filedialog.asksaveasfile(mode="w", defaultextension=".txt", filetypes=(("Text File", "*.txt"), ("All Files", "*.*")))
-        url.write(content)
-        url.close()
-    except:
-        return
-
-file.add_command(label="另存为", image=save_as_icon, compound=tk.LEFT, accelerator="Ctrl+Alt+S", command=save_as)
+        url = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text File", "*.txt"), ("All Files", "*.*")])
+        if url:
+            with open(url, "w", encoding="utf-8") as fw:
+                fw.write(content)
+    except Exception as e:
+        messagebox.showerror("错误", f"无法保存文件: {e}")
 
 def exit_func(event=None):
     global url, text_changed
     try:
         if text_changed:
             mbox = messagebox.askyesnocancel("请稍等！", "您要保存文件吗？")
-            if mbox is True:
-                if url:
-                    content = text_editor.get(1.0, tk.END)
-                    with open(url, "w", encoding="utf-8") as fw:
-                        fw.write(content)
-                        main_application.destroy()
-                else:
-                    content2 = text_editor.get(1.0, tk.END)
-                    url = filedialog.asksaveasfile(mode="w", defaultextension=".txt", filetypes=(("Text File", "*.txt"), ("All Files", "*.*")))
-                    url.write(content2)
-                    url.close()
-                    main_application.destroy()
-            elif mbox is False:
+            if mbox:
+                save_file()
+            if mbox is not None:
                 main_application.destroy()
         else:
             main_application.destroy()
-    except:
-        return
+    except Exception as e:
+        messagebox.showerror("错误", f"无法退出: {e}")
 
-file.add_command(label="退出", image=exit_icon, compound=tk.LEFT, accelerator="Ctrl+Q", command=exit_func)
+create_menu_command(file, "新建", new_icon, "Ctrl+N", new_file)
+create_menu_command(file, "打开", open_icon, "Ctrl+O", open_file)
+create_menu_command(file, "保存", save_icon, "Ctrl+S", save_file)
+create_menu_command(file, "另存为", save_as_icon, "Ctrl+Alt+S", save_as)
+create_menu_command(file, "退出", exit_icon, "Ctrl+Q", exit_func)
 
 def find_func(event=None):
     def find():
@@ -322,7 +243,7 @@ def find_func(event=None):
                 start_pos = text_editor.search(word, start_pos, stopindex=tk.END)
                 if not start_pos:
                     break
-                end_pos = f"{start_pos}+ {len(word)}c"
+                end_pos = f"{start_pos}+{len(word)}c"
                 text_editor.tag_add("match", start_pos, end_pos)
                 matches += 1
                 start_pos = end_pos
@@ -362,11 +283,11 @@ def find_func(event=None):
 
     find_dialogue.mainloop()
 
-edit.add_command(label="复制", image=copy_icon, compound=tk.LEFT, accelerator="Ctrl+C", command=lambda: text_editor.event_generate("<Control c>"))
-edit.add_command(label="粘贴", image=paste_icon, compound=tk.LEFT, accelerator="Ctrl+V", command=lambda: text_editor.event_generate("<Control v>"))
-edit.add_command(label="剪切", image=cut_icon, compound=tk.LEFT, accelerator="Ctrl+X", command=lambda: text_editor.event_generate("<Control x>"))
-edit.add_command(label="清空", image=clear_all_icon, compound=tk.LEFT, accelerator="Ctrl+Alt+X", command=lambda: text_editor.delete(1.0, tk.END))
-edit.add_command(label="查找", image=find_icon, compound=tk.LEFT, accelerator="Ctrl+F", command=find_func)
+create_menu_command(edit, "复制", copy_icon, "Ctrl+C", lambda: text_editor.event_generate("<Control c>"))
+create_menu_command(edit, "粘贴", paste_icon, "Ctrl+V", lambda: text_editor.event_generate("<Control v>"))
+create_menu_command(edit, "剪切", cut_icon, "Ctrl+X", lambda: text_editor.event_generate("<Control x>"))
+create_menu_command(edit, "清空", clear_all_icon, "Ctrl+Alt+X", lambda: text_editor.delete(1.0, tk.END))
+create_menu_command(edit, "查找", find_icon, "Ctrl+F", find_func)
 
 show_statusbar = tk.BooleanVar()
 show_statusbar.set(True)
@@ -374,41 +295,22 @@ show_statusbar.set(True)
 show_toolbar = tk.BooleanVar()
 show_toolbar.set(True)
 
-def hide_toolbar():
-    global show_toolbar
-    if show_toolbar:
-        tool_bar.pack_forget()
-        show_toolbar = False
+def toggle_widget(widget, var):
+    if var.get():
+        widget.pack(side=tk.BOTTOM if widget == status_bar else tk.TOP, fill=tk.X)
     else:
-        text_editor.pack_forget()
-        status_bar.pack_forget()
-        tool_bar.pack(side=tk.TOP, fill=tk.X)
-        text_editor.pack(fill=tk.BOTH, expand=True)
-        status_bar.pack(side=tk.BOTTOM)
-        show_toolbar = True
+        widget.pack_forget()
 
-def hide_statusbar():
-    global show_statusbar
-    if show_statusbar:
-        status_bar.pack_forget()
-        show_statusbar = False
-    else:
-        status_bar.pack(side=tk.BOTTOM)
-        show_statusbar = True
-
-view.add_checkbutton(label="工具栏", onvalue=True, offvalue=False, variable=show_toolbar, image=tool_bar_icon, compound=tk.LEFT, command=hide_toolbar)
-view.add_checkbutton(label="状态栏", onvalue=True, offvalue=False, variable=show_statusbar, image=status_bar_icon, compound=tk.LEFT, command=hide_statusbar)
+view.add_checkbutton(label="工具栏", onvalue=True, offvalue=False, variable=show_toolbar, image=tool_bar_icon, compound=tk.LEFT, command=lambda: toggle_widget(tool_bar, show_toolbar))
+view.add_checkbutton(label="状态栏", onvalue=True, offvalue=False, variable=show_statusbar, image=status_bar_icon, compound=tk.LEFT, command=lambda: toggle_widget(status_bar, show_statusbar))
 
 def change_theme():
     chosen_theme = theme_choice.get()
-    color_tuple = color_dict.get(chosen_theme)
-    fg_color, bg_color = color_tuple[0], color_tuple[1]
+    fg_color, bg_color = color_dict[chosen_theme]
     text_editor.config(background=bg_color, fg=fg_color)
 
-count = 0
-for i in color_dict:
-    color_theme.add_radiobutton(label=i, image=color_icons[count], variable=theme_choice, compound=tk.LEFT, command=change_theme)
-    count += 1
+for count, (theme_name, colors) in enumerate(color_dict.items()):
+    color_theme.add_radiobutton(label=theme_name, image=color_icons[count], variable=theme_choice, compound=tk.LEFT, command=change_theme)
 
 main_application.config(menu=main_menu)
 
