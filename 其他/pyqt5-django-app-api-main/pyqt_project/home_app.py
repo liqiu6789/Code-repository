@@ -8,7 +8,7 @@ import admin_panel
 class Window(QtWidgets.QWidget):
     def __init__(self, admin_name: str, api):
         super(Window, self).__init__()
-        self.setWindowTitle('主页 V1')
+        self.setWindowTitle('基于Python开发的通讯录管理系统')
         self.setGeometry(150, 150, 700, 500)
         self.userID = None
         self.api = api

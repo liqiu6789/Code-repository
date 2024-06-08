@@ -25,17 +25,21 @@ def login_back_frame():
 
 def main_frame():
     return """    
+    QFrame {
     background-color: #263238;
     border-radius: 20%;
     padding: 6px;
     color: #E0E0E0;
+    }
     """
 
 
 def line_edit():
     return """
+    QLineEdit {
     border: none;
     border-bottom: 1px solid #B0BEC5;
+    }
     """
 
 
@@ -89,23 +93,18 @@ def add_contact_layout():
     return """
     QGroupBox{
     border-radius: 7%;
+    background-color: #37474F;
     }
 
     QLineEdit{
     border: none;
     border-bottom: 1px solid #B0BEC5;
+    background-color: #37474F;
     }
     """
 
 
-# #################
-
-
 def left_layout_student():
-    """
-    border-radius: 7%;
-    border-bottom: 1px solid #FFFFFF;
-    """
     return """
     QFrame{
     background-color: #009688;
@@ -132,7 +131,6 @@ def left_layout_student():
     QPushButton::focus{
     background-color: #26A69A;
     }
-
     """
 
 
@@ -173,6 +171,7 @@ def item_bottom_layout():
     return """
     QFrame{
     border-radius: 7%;
+    background-color: #37474F;
     }
     """
 
@@ -229,7 +228,7 @@ def group_box_teacher():
 
 def dashboard_frame():
     return """
-    .QFrame{
+    QFrame{
     background-color: #37474F;
     border-bottom: 3px solid #FF5252;
     }
