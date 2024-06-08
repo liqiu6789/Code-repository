@@ -14,3 +14,4 @@
 基于Python开发的批量图片处理系统
 基于Django开发的个人博客系统
 基于Python开发的Excel处理系统
+基于Python开发的通讯录管理系统
