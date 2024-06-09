@@ -13,7 +13,7 @@ def create_menu_command(menu, label, icon, accelerator, command):
     menu.add_command(label=label, image=icon, compound=tk.LEFT, accelerator=accelerator, command=command)
 
 main_application = tk.Tk()
-main_application.geometry('1200x600')
+main_application.geometry('900x600')
 main_application.title("基于Python开发的文本编辑系统")
 
 main_menu = tk.Menu()
