@@ -2,20 +2,24 @@ import tkinter as tk
 from tkinter import ttk, colorchooser, filedialog, messagebox, font
 import os
 
+# 创建工具栏按钮函数
 def create_toolbar_button(parent, image_path, row, column, command=None):
     icon = tk.PhotoImage(file=image_path)
     btn = ttk.Button(parent, image=icon, command=command)
     btn.image = icon  # 保持引用，防止图像被垃圾回收
-    btn.grid(row=row, column=column, padx=5)
+    btn.grid(row=row, column=column, pady=5)
     return btn
 
+# 创建菜单命令函数
 def create_menu_command(menu, label, icon, accelerator, command):
     menu.add_command(label=label, image=icon, compound=tk.LEFT, accelerator=accelerator, command=command)
 
+# 主应用程序窗口设置
 main_application = tk.Tk()
 main_application.geometry('900x600')
 main_application.title("基于Python开发的文本编辑系统")
 
+# 菜单设置
 main_menu = tk.Menu()
 file_menu = tk.Menu(main_menu, tearoff=False)
 edit_menu = tk.Menu(main_menu, tearoff=False)
@@ -27,6 +31,7 @@ main_menu.add_cascade(label="编辑", menu=edit_menu)
 main_menu.add_cascade(label="视图", menu=view_menu)
 main_menu.add_cascade(label="主题", menu=color_theme_menu)
 
+# 图标路径和加载
 icon_paths = [
     "icon/new.png", "icon/open.png", "icon/save.png", "icon/save_as.png", "icon/exit.png",
     "icon/copy.png", "icon/paste.png", "icon/cut.png", "icon/clear_all.png", "icon/find.png",
@@ -55,34 +60,36 @@ color_dict = {
     "Night Blue": ("#ededed", "#6b9dc2")
 }
 
-tool_bar = ttk.Label(main_application)
-tool_bar.pack(side=tk.TOP, fill=tk.X)
+# 工具栏设置
+tool_bar = ttk.Frame(main_application)
+tool_bar.pack(side=tk.LEFT, fill=tk.Y)
 
 font_tuple = tk.font.families()
 font_family = tk.StringVar()
-font_box = ttk.Combobox(tool_bar, width=30, textvariable=font_family, state="readonly")
+font_box = ttk.Combobox(tool_bar, width=14, textvariable=font_family, state="readonly")
 font_box["values"] = font_tuple
 font_box.current(font_tuple.index("黑体"))
-font_box.grid(row=0, column=0, padx=5)
+font_box.grid(row=0, column=0, pady=5)
 
 size_var = tk.IntVar()
 font_size = ttk.Combobox(tool_bar, width=14, textvariable=size_var, state="readonly")
 font_size["values"] = tuple(range(8, 80, 2))
 font_size.current(3)
-font_size.grid(row=0, column=1, padx=5)
+font_size.grid(row=1, column=0, pady=5)
 
 button_configs = [
-    ("icon/bold.png", 0, 2, None),
-    ("icon/italic.png", 0, 3, None),
-    ("icon/underline.png", 0, 4, None),
-    ("icon/font_color.png", 0, 5, None),
-    ("icon/align_left.png", 0, 6, None),
-    ("icon/align_center.png", 0, 7, None),
-    ("icon/align_right.png", 0, 8, None)
+    ("icon/bold.png", 2, 0, None),
+    ("icon/italic.png", 3, 0, None),
+    ("icon/underline.png", 4, 0, None),
+    ("icon/font_color.png", 5, 0, None),
+    ("icon/align_left.png", 6, 0, None),
+    ("icon/align_center.png", 7, 0, None),
+    ("icon/align_right.png", 8, 0, None)
 ]
 
 buttons = [create_toolbar_button(tool_bar, *config) for config in button_configs]
 
+# 文本编辑器设置
 text_editor = tk.Text(main_application, wrap="word", relief=tk.FLAT)
 text_editor.pack(fill=tk.BOTH, expand=True)
 
