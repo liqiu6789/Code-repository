@@ -28,10 +28,10 @@ main_menu.add_cascade(label="视图", menu=view)
 main_menu.add_cascade(label="主题", menu=color_theme)
 
 icon_paths = [
-    "icons2/new.png", "icons2/open.png", "icons2/save.png", "icons2/save_as.png", "icons2/exit.png",
-    "icons2/copy.png", "icons2/paste.png", "icons2/cut.png", "icons2/clear_all.png", "icons2/find.png",
-    "icons2/tool_bar.png", "icons2/status_bar.png", "icons2/light_default.png", "icons2/light_plus.png",
-    "icons2/dark.png", "icons2/red.png", "icons2/monokai.png", "icons2/night_blue.png"
+    "icon/new.png", "icon/open.png", "icon/save.png", "icon/save_as.png", "icon/exit.png",
+    "icon/copy.png", "icon/paste.png", "icon/cut.png", "icon/clear_all.png", "icon/find.png",
+    "icon/tool_bar.png", "icon/status_bar.png", "icon/light_default.png", "icon/light_plus.png",
+    "icon/dark.png", "icon/red.png", "icon/monokai.png", "icon/night_blue.png"
 ]
 
 icons = [tk.PhotoImage(file=path) for path in icon_paths]
@@ -72,13 +72,13 @@ font_size.current(3)
 font_size.grid(row=0, column=1, padx=5)
 
 button_configs = [
-    ("icons2/bold.png", 0, 2, None),
-    ("icons2/italic.png", 0, 3, None),
-    ("icons2/underline.png", 0, 4, None),
-    ("icons2/font_color.png", 0, 5, None),
-    ("icons2/align_left.png", 0, 6, None),
-    ("icons2/align_center.png", 0, 7, None),
-    ("icons2/align_right.png", 0, 8, None)
+    ("icon/bold.png", 0, 2, None),
+    ("icon/italic.png", 0, 3, None),
+    ("icon/underline.png", 0, 4, None),
+    ("icon/font_color.png", 0, 5, None),
+    ("icon/align_left.png", 0, 6, None),
+    ("icon/align_center.png", 0, 7, None),
+    ("icon/align_right.png", 0, 8, None)
 ]
 
 buttons = [create_toolbar_button(tool_bar, *config) for config in button_configs]
