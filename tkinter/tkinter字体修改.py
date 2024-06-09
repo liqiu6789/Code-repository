@@ -6,9 +6,9 @@ root = tk.Tk()
 root.title("字体选择器")
 root.geometry("800x600")
 
-# 创建文本编辑框
-text_editor = tk.Text(root, wrap='word', relief=tk.FLAT)
-text_editor.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+# 创建顶层容器
+top_frame = tk.Frame(root)
+top_frame.pack(side=tk.TOP, fill=tk.X, padx=10, pady=10)
 
 # 获取所有可用字体
 available_fonts = list(font.families())
@@ -18,16 +18,20 @@ current_font_family = tk.StringVar(value="Arial")
 current_font_size = tk.IntVar(value=12)
 
 # 字体选择器
-font_label = ttk.Label(root, text="选择字体:")
+font_label = ttk.Label(top_frame, text="选择字体:")
 font_label.pack(side=tk.LEFT, padx=(10, 5))
-font_family_box = ttk.Combobox(root, textvariable=current_font_family, state='readonly', values=available_fonts)
+font_family_box = ttk.Combobox(top_frame, textvariable=current_font_family, state='readonly', values=available_fonts)
 font_family_box.pack(side=tk.LEFT, padx=(0, 10))
 
 # 字体大小选择器
-font_size_label = ttk.Label(root, text="选择大小:")
+font_size_label = ttk.Label(top_frame, text="选择大小:")
 font_size_label.pack(side=tk.LEFT, padx=(10, 5))
-font_size_box = ttk.Combobox(root, textvariable=current_font_size, state='readonly', values=tuple(range(8, 72, 2)))
+font_size_box = ttk.Combobox(top_frame, textvariable=current_font_size, state='readonly', values=tuple(range(8, 72, 2)))
 font_size_box.pack(side=tk.LEFT, padx=(0, 10))
+
+# 创建文本编辑框
+text_editor = tk.Text(root, wrap='word', relief=tk.FLAT)
+text_editor.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
 # 应用字体变化的函数
 def apply_font_changes(event=None):
