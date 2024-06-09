@@ -62,7 +62,7 @@ font_tuple = tk.font.families()
 font_family = tk.StringVar()
 font_box = ttk.Combobox(tool_bar, width=30, textvariable=font_family, state="readonly")
 font_box["values"] = font_tuple
-font_box.current(font_tuple.index("Arial"))
+font_box.current(font_tuple.index("黑体"))
 font_box.grid(row=0, column=0, padx=5)
 
 size_var = tk.IntVar()
@@ -151,7 +151,7 @@ buttons[4].configure(command=lambda: align_text(tk.LEFT))
 buttons[5].configure(command=lambda: align_text(tk.CENTER))
 buttons[6].configure(command=lambda: align_text(tk.RIGHT))
 
-text_editor.configure(font=("Arial", 12))
+text_editor.configure(font=("黑体", 12))
 
 status_bar = ttk.Label(main_application, text="状态栏")
 status_bar.pack(side=tk.BOTTOM)
