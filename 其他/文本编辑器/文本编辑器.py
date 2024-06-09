@@ -14,18 +14,18 @@ def create_menu_command(menu, label, icon, accelerator, command):
 
 main_application = tk.Tk()
 main_application.geometry('1200x600')
-main_application.title("基于Python开发的文本编辑器")
+main_application.title("基于Python开发的文本编辑系统")
 
 main_menu = tk.Menu()
-file = tk.Menu(main_menu, tearoff=False)
-edit = tk.Menu(main_menu, tearoff=False)
-view = tk.Menu(main_menu, tearoff=False)
-color_theme = tk.Menu(main_menu, tearoff=False)
+file_menu = tk.Menu(main_menu, tearoff=False)
+edit_menu = tk.Menu(main_menu, tearoff=False)
+view_menu = tk.Menu(main_menu, tearoff=False)
+color_theme_menu = tk.Menu(main_menu, tearoff=False)
 
-main_menu.add_cascade(label="文件", menu=file)
-main_menu.add_cascade(label="编辑", menu=edit)
-main_menu.add_cascade(label="视图", menu=view)
-main_menu.add_cascade(label="主题", menu=color_theme)
+main_menu.add_cascade(label="文件", menu=file_menu)
+main_menu.add_cascade(label="编辑", menu=edit_menu)
+main_menu.add_cascade(label="视图", menu=view_menu)
+main_menu.add_cascade(label="主题", menu=color_theme_menu)
 
 icon_paths = [
     "icon/new.png", "icon/open.png", "icon/save.png", "icon/save_as.png", "icon/exit.png",
@@ -109,28 +109,19 @@ font_size.bind("<<ComboboxSelected>>", change_font_size)
 
 def change_bold():
     text_property = tk.font.Font(font=text_editor["font"])
-    if text_property.actual()["weight"] == "normal":
-        text_editor.config(font=(current_font_family, current_font_size, "bold"))
-    elif text_property.actual()["weight"] == "bold":
-        text_editor.config(font=(current_font_family, current_font_size, "normal"))
+    text_editor.config(font=(current_font_family, current_font_size, "bold" if text_property.actual()["weight"] == "normal" else "normal"))
 
 buttons[0].configure(command=change_bold)
 
 def change_italic():
     text_property = tk.font.Font(font=text_editor["font"])
-    if text_property.actual()["slant"] == "roman":
-        text_editor.config(font=(current_font_family, current_font_size, "italic"))
-    elif text_property.actual()["slant"] == "italic":
-        text_editor.config(font=(current_font_family, current_font_size, "normal"))
+    text_editor.config(font=(current_font_family, current_font_size, "italic" if text_property.actual()["slant"] == "roman" else "normal"))
 
 buttons[1].configure(command=change_italic)
 
 def change_underline():
     text_property = tk.font.Font(font=text_editor["font"])
-    if text_property.actual()["underline"] == 0:
-        text_editor.config(font=(current_font_family, current_font_size, "underline"))
-    elif text_property.actual()["underline"] == 1:
-        text_editor.config(font=(current_font_family, current_font_size, "normal"))
+    text_editor.config(font=(current_font_family, current_font_size, "underline" if text_property.actual()["underline"] == 0 else "normal"))
 
 buttons[2].configure(command=change_underline)
 
@@ -153,18 +144,12 @@ buttons[6].configure(command=lambda: align_text(tk.RIGHT))
 
 text_editor.configure(font=("黑体", 12))
 
-status_bar = ttk.Label(main_application, text="状态栏")
-status_bar.pack(side=tk.BOTTOM)
-
 text_changed = False
 
 def changed(event=None):
     global text_changed
     if text_editor.edit_modified():
         text_changed = True
-        words = len(text_editor.get(1.0, "end-1c").split())
-        characters = len(text_editor.get(1.0, "end-1c"))
-        status_bar.config(text=f'字符数: {characters} 词数: {words}')
     text_editor.edit_modified(False)
 
 text_editor.bind("<<Modified>>", changed)
@@ -183,8 +168,6 @@ def open_file(event=None):
         with open(url, "r") as fr:
             text_editor.delete(1.0, tk.END)
             text_editor.insert(1.0, fr.read())
-    except FileNotFoundError:
-        return
     except Exception as e:
         messagebox.showerror("错误", f"无法打开文件: {e}")
     main_application.title(os.path.basename(url))
@@ -193,9 +176,8 @@ def save_file(event=None):
     global url
     try:
         if url:
-            content = text_editor.get(1.0, tk.END)
             with open(url, "w", encoding="utf-8") as fw:
-                fw.write(content)
+                fw.write(text_editor.get(1.0, tk.END))
         else:
             save_as()
     except Exception as e:
@@ -204,58 +186,45 @@ def save_file(event=None):
 def save_as(event=None):
     global url
     try:
-        content = text_editor.get(1.0, tk.END)
         url = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text File", "*.txt"), ("All Files", "*.*")])
         if url:
             with open(url, "w", encoding="utf-8") as fw:
-                fw.write(content)
+                fw.write(text_editor.get(1.0, tk.END))
     except Exception as e:
         messagebox.showerror("错误", f"无法保存文件: {e}")
 
 def exit_func(event=None):
-    global url, text_changed
-    try:
-        if text_changed:
-            mbox = messagebox.askyesnocancel("请稍等！", "您要保存文件吗？")
-            if mbox:
-                save_file()
-            if mbox is not None:
-                main_application.destroy()
-        else:
-            main_application.destroy()
-    except Exception as e:
-        messagebox.showerror("错误", f"无法退出: {e}")
+    if text_changed:
+        if messagebox.askyesnocancel("请稍等！", "您要保存文件吗？"):
+            save_file()
+    main_application.destroy()
 
-create_menu_command(file, "新建", new_icon, "Ctrl+N", new_file)
-create_menu_command(file, "打开", open_icon, "Ctrl+O", open_file)
-create_menu_command(file, "保存", save_icon, "Ctrl+S", save_file)
-create_menu_command(file, "另存为", save_as_icon, "Ctrl+Alt+S", save_as)
-create_menu_command(file, "退出", exit_icon, "Ctrl+Q", exit_func)
+create_menu_command(file_menu, "新建", new_icon, "Ctrl+N", new_file)
+create_menu_command(file_menu, "打开", open_icon, "Ctrl+O", open_file)
+create_menu_command(file_menu, "保存", save_icon, "Ctrl+S", save_file)
+create_menu_command(file_menu, "另存为", save_as_icon, "Ctrl+Alt+S", save_as)
+create_menu_command(file_menu, "退出", exit_icon, "Ctrl+Q", exit_func)
 
 def find_func(event=None):
     def find():
         word = find_input.get()
         text_editor.tag_remove('match', "1.0", tk.END)
-        matches = 0
-        if word:
-            start_pos = "1.0"
-            while True:
-                start_pos = text_editor.search(word, start_pos, stopindex=tk.END)
-                if not start_pos:
-                    break
-                end_pos = f"{start_pos}+{len(word)}c"
-                text_editor.tag_add("match", start_pos, end_pos)
-                matches += 1
-                start_pos = end_pos
-                text_editor.tag_config("match", foreground="yellow", background="green")
+        start_pos = "1.0"
+        while word:
+            start_pos = text_editor.search(word, start_pos, stopindex=tk.END)
+            if not start_pos:
+                break
+            end_pos = f"{start_pos}+{len(word)}c"
+            text_editor.tag_add("match", start_pos, end_pos)
+            start_pos = end_pos
+        text_editor.tag_config("match", foreground="yellow", background="green")
 
     def replace():
         word = find_input.get()
         replace_text = replace_input.get()
-        content = text_editor.get(1.0, tk.END)
-        new_content = content.replace(word, replace_text)
+        text_content = text_editor.get(1.0, tk.END)
         text_editor.delete(1.0, tk.END)
-        text_editor.insert(1.0, new_content)
+        text_editor.insert(1.0, text_content.replace(word, replace_text))
 
     find_dialogue = tk.Toplevel()
     find_dialogue.geometry("375x250+500+200")
@@ -265,52 +234,39 @@ def find_func(event=None):
     find_frame = ttk.LabelFrame(find_dialogue, text="查找/替换")
     find_frame.pack(pady=20)
 
-    text_find_label = ttk.Label(find_frame, text="查找: ")
-    text_replace_label = ttk.Label(find_frame, text="替换:")
+    ttk.Label(find_frame, text="查找: ").grid(row=0, column=0, padx=4, pady=4)
+    ttk.Label(find_frame, text="替换:").grid(row=1, column=0, padx=4, pady=4)
 
     find_input = ttk.Entry(find_frame, width=30)
-    replace_input = ttk.Entry(find_frame, width=30)
-
-    find_button = ttk.Button(find_frame, text="查找", command=find)
-    replace_button = ttk.Button(find_frame, text="替换", command=replace)
-
-    text_find_label.grid(row=0, column=0, padx=4, pady=4)
-    text_replace_label.grid(row=1, column=0, padx=4, pady=4)
     find_input.grid(row=0, column=1, padx=4, pady=4)
+    replace_input = ttk.Entry(find_frame, width=30)
     replace_input.grid(row=1, column=1, padx=4, pady=4)
-    find_button.grid(row=2, column=0, padx=8, pady=4)
-    replace_button.grid(row=2, column=2, padx=8, pady=4)
+
+    ttk.Button(find_frame, text="查找", command=find).grid(row=2, column=0, padx=8, pady=4)
+    ttk.Button(find_frame, text="替换", command=replace).grid(row=2, column=2, padx=8, pady=4)
 
     find_dialogue.mainloop()
 
-create_menu_command(edit, "复制", copy_icon, "Ctrl+C", lambda: text_editor.event_generate("<Control c>"))
-create_menu_command(edit, "粘贴", paste_icon, "Ctrl+V", lambda: text_editor.event_generate("<Control v>"))
-create_menu_command(edit, "剪切", cut_icon, "Ctrl+X", lambda: text_editor.event_generate("<Control x>"))
-create_menu_command(edit, "清空", clear_all_icon, "Ctrl+Alt+X", lambda: text_editor.delete(1.0, tk.END))
-create_menu_command(edit, "查找", find_icon, "Ctrl+F", find_func)
-
-show_statusbar = tk.BooleanVar()
-show_statusbar.set(True)
+create_menu_command(edit_menu, "复制", copy_icon, "Ctrl+C", lambda: text_editor.event_generate("<Control c>"))
+create_menu_command(edit_menu, "粘贴", paste_icon, "Ctrl+V", lambda: text_editor.event_generate("<Control v>"))
+create_menu_command(edit_menu, "剪切", cut_icon, "Ctrl+X", lambda: text_editor.event_generate("<Control x>"))
+create_menu_command(edit_menu, "清空", clear_all_icon, "Ctrl+Alt+X", lambda: text_editor.delete(1.0, tk.END))
+create_menu_command(edit_menu, "查找", find_icon, "Ctrl+F", find_func)
 
 show_toolbar = tk.BooleanVar()
 show_toolbar.set(True)
 
 def toggle_widget(widget, var):
-    if var.get():
-        widget.pack(side=tk.BOTTOM if widget == status_bar else tk.TOP, fill=tk.X)
-    else:
-        widget.pack_forget()
+    widget.pack(side=tk.TOP, fill=tk.X) if var.get() else widget.pack_forget()
 
-view.add_checkbutton(label="工具栏", onvalue=True, offvalue=False, variable=show_toolbar, image=tool_bar_icon, compound=tk.LEFT, command=lambda: toggle_widget(tool_bar, show_toolbar))
-view.add_checkbutton(label="状态栏", onvalue=True, offvalue=False, variable=show_statusbar, image=status_bar_icon, compound=tk.LEFT, command=lambda: toggle_widget(status_bar, show_statusbar))
+view_menu.add_checkbutton(label="工具栏", onvalue=True, offvalue=False, variable=show_toolbar, image=tool_bar_icon, compound=tk.LEFT, command=lambda: toggle_widget(tool_bar, show_toolbar))
 
 def change_theme():
-    chosen_theme = theme_choice.get()
-    fg_color, bg_color = color_dict[chosen_theme]
+    fg_color, bg_color = color_dict[theme_choice.get()]
     text_editor.config(background=bg_color, fg=fg_color)
 
-for count, (theme_name, colors) in enumerate(color_dict.items()):
-    color_theme.add_radiobutton(label=theme_name, image=color_icons[count], variable=theme_choice, compound=tk.LEFT, command=change_theme)
+for count, theme_name in enumerate(color_dict):
+    color_theme_menu.add_radiobutton(label=theme_name, image=color_icons[count], variable=theme_choice, compound=tk.LEFT, command=change_theme)
 
 main_application.config(menu=main_menu)
 
