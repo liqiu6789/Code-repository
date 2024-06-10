@@ -23,9 +23,9 @@ class BirthdayCardGUI(QtWidgets.QWidget):
         self.font_size = 35
 
         # 定义组件
-        self.content_label = QLabel('内容路径:')
-        self.bg_label = QLabel('背景路径:')
-        self.font_label = QLabel('字体:')
+        self.content_label = QLabel('选择内容:')
+        self.bg_label = QLabel('背景图片:')
+        self.font_label = QLabel('选择字体:')
         self.fontcolor_label = QLabel('字体颜色:')
         self.show_label = QLabel()
         self.show_label.setScaledContents(True)
@@ -43,13 +43,17 @@ class BirthdayCardGUI(QtWidgets.QWidget):
         self.save_button = QPushButton('保存祝福')
 
         self.font_color_combobox = QComboBox()
-        for color in ['red', 'white', 'black', 'blue', 'yellow', 'green']:
+        colors = [
+            'red', 'white', 'black', 'blue', 'yellow', 'green', 'purple', 'orange',
+            'pink', 'brown', 'gray', 'cyan', 'magenta', 'lime', 'maroon',
+            'navy', 'olive', 'teal', 'violet', 'gold'
+        ]
+        for color in colors:
             self.font_color_combobox.addItem(color)
         for item in (self.choose_content_button, self.choose_bg_button, self.generate_button, self.save_button):
             item.setFixedHeight(30)
         self.font_color_combobox.setFixedWidth(1100)
         self.font_combobox.setFixedWidth(1100)
-
 
         common_chinese_fonts = ["宋体", "新罗马", "仿宋", "微软雅黑","黑体","楷体"]
         for font in common_chinese_fonts:
