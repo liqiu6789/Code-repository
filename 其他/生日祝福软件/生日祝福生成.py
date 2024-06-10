@@ -43,11 +43,10 @@ class BirthdayCardGUI(QtWidgets.QWidget):
         self.save_button = QPushButton('保存祝福')
 
         self.font_color_combobox = QComboBox()
-        colors = [
-            'red', 'white', 'black', 'blue', 'yellow', 'green', 'purple', 'orange',
-            'pink', 'brown', 'gray', 'cyan', 'magenta', 'lime', 'maroon',
-            'navy', 'olive', 'teal', 'violet', 'gold'
-        ]
+        colors = ['lime', 'maroon', 'navy', 'olive', 'teal', 'violet', 'gold',
+                  'red', 'white', 'black', 'blue', 'yellow', 'green', 'purple',
+                  'orange', 'pink', 'brown', 'gray', 'cyan', 'magenta'
+                  ]
         for color in colors:
             self.font_color_combobox.addItem(color)
         for item in (self.choose_content_button, self.choose_bg_button, self.generate_button, self.save_button):
@@ -55,7 +54,7 @@ class BirthdayCardGUI(QtWidgets.QWidget):
         self.font_color_combobox.setFixedWidth(1100)
         self.font_combobox.setFixedWidth(1100)
 
-        common_chinese_fonts = ["宋体", "新罗马", "仿宋", "微软雅黑","黑体","楷体"]
+        common_chinese_fonts = ["宋体", "新罗马", "仿宋", "微软雅黑", "黑体", "楷体"]
         for font in common_chinese_fonts:
             if font not in common_chinese_fonts:
                 common_chinese_fonts.append(font)
