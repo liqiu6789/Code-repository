@@ -1,7 +1,7 @@
 import os
 import io
 import sys
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QFontDatabase
 from PyQt5.QtWidgets import *
 from PyQt5 import QtWidgets, QtGui
 from PIL import Image, ImageDraw, ImageFont
@@ -25,29 +25,38 @@ class BirthdayCardGUI(QtWidgets.QWidget):
         # 定义组件
         self.content_label = QLabel('内容路径:')
         self.bg_label = QLabel('背景路径:')
-        self.font_label = QLabel('字体路径:')
+        self.font_label = QLabel('字体:')
         self.fontcolor_label = QLabel('字体颜色:')
         self.show_label = QLabel()
         self.show_label.setScaledContents(True)
-        self.show_label.setMaximumSize(800, 600)
+        self.show_label.setFixedSize(1100, 600)  # 设置显示大小
 
         self.content_edit = QLineEdit()
         self.content_edit.setText('contents/birthday.txt')
         self.bg_edit = QLineEdit()
         self.bg_edit.setText('bgimages/1.png')
-        self.font_edit = QLineEdit()
-        self.font_edit.setText('fonts/font.TTF')
+        self.font_combobox = QComboBox()  # 使用下拉列表选择字体
 
-        self.choose_content_button = QPushButton('选择路径')
-        self.choose_bg_button = QPushButton('选择路径')
-        self.choose_font_button = QPushButton('选择路径')
-        self.generate_button = QPushButton('生成祝福卡')
-        self.save_button = QPushButton('保存祝福卡')
+        self.choose_content_button = QPushButton('选择内容')
+        self.choose_bg_button = QPushButton('选择背景')
+        self.generate_button = QPushButton('生成祝福')
+        self.save_button = QPushButton('保存祝福')
 
         self.font_color_combobox = QComboBox()
         for color in ['red', 'white', 'black', 'blue', 'yellow', 'green']:
             self.font_color_combobox.addItem(color)
-        self.font_color_combobox.setFixedWidth(1100)  # 设置下拉列表宽度
+        for item in (self.choose_content_button, self.choose_bg_button, self.generate_button, self.save_button):
+            item.setFixedHeight(30)
+        self.font_color_combobox.setFixedWidth(1100)
+        self.font_combobox.setFixedWidth(1100)
+
+
+        common_chinese_fonts = ["宋体", "新罗马", "仿宋", "微软雅黑","黑体","楷体"]
+        for font in common_chinese_fonts:
+            if font not in common_chinese_fonts:
+                common_chinese_fonts.append(font)
+
+        self.font_combobox.addItems(common_chinese_fonts)
 
         # 布局设置
         main_layout = QVBoxLayout()
@@ -68,8 +77,7 @@ class BirthdayCardGUI(QtWidgets.QWidget):
 
         font_layout = QHBoxLayout()
         font_layout.addWidget(self.font_label)
-        font_layout.addWidget(self.font_edit)
-        font_layout.addWidget(self.choose_font_button)
+        font_layout.addWidget(self.font_combobox)
 
         font_color_layout = QHBoxLayout()
         font_color_layout.addWidget(self.fontcolor_label)
@@ -98,7 +106,6 @@ class BirthdayCardGUI(QtWidgets.QWidget):
         # 事件绑定
         self.choose_content_button.clicked.connect(self.open_content_filepath)
         self.choose_bg_button.clicked.connect(self.open_bg_filepath)
-        self.choose_font_button.clicked.connect(self.open_font_filepath)
         self.generate_button.clicked.connect(self.generate_card)
         self.save_button.clicked.connect(self.save_card)
         self.generate_card()
@@ -106,14 +113,22 @@ class BirthdayCardGUI(QtWidgets.QWidget):
     def generate_card(self):
         content_path = self.content_edit.text()
         bg_path = self.bg_edit.text()
-        font_path = self.font_edit.text()
+        font_family = self.font_combobox.currentText()
         font_color = self.font_color_combobox.currentText()
 
-        if not all(map(self.check_filepath, [content_path, bg_path, font_path])):
+        if not all(map(self.check_filepath, [content_path, bg_path])):
             self.card_image = None
             return
 
         contents = open(content_path, encoding='utf-8').read().split('\n')
+
+        # 获取系统字体文件路径
+        font_path = self.get_font_path(font_family)
+
+        if font_path is None:
+            QMessageBox.critical(self, "错误", "无法找到所选字体的文件路径")
+            return
+
         font_card = ImageFont.truetype(font_path, self.font_size)
         image = Image.open(bg_path).convert('RGB')
         draw = ImageDraw.Draw(image)
@@ -127,9 +142,23 @@ class BirthdayCardGUI(QtWidgets.QWidget):
         self.display_image(image)
         self.card_image = image
 
+    def get_font_path(self, font_family):
+        font_paths = {
+            "宋体": "C:\\Windows\\Fonts\\simsun.ttc",
+            "新罗马": "C:\\Windows\\Fonts\\times.ttf",
+            "SimSun": "C:\\Windows\\Fonts\\simsun.ttc",
+            "SimHei": "C:\\Windows\\Fonts\\simhei.ttf",
+            "楷体": "C:\\Windows\\Fonts\\simkai.ttf",
+            "仿宋": "C:\\Windows\\Fonts\\simfang.ttf",
+            "微软雅黑": "C:\\Windows\\Fonts\\msyh.ttc",
+            "Microsoft JhengHei": "C:\\Windows\\Fonts\\msjh.ttc",
+            # 添加其他常用字体的路径
+        }
+        return font_paths.get(font_family, None)
+
     def open_content_filepath(self):
         filepath, _ = QFileDialog.getOpenFileName(self, "请选取祝福卡内容文件", '.',
-                                                  "Text Files (*.card);;All Files (*)")
+                                                  "Text Files (*.txt);;All Files (*)")
         if filepath:
             self.content_edit.setText(filepath)
 
@@ -138,12 +167,6 @@ class BirthdayCardGUI(QtWidgets.QWidget):
                                                   "Image Files (*.png *.jpg *.bmp);;All Files (*)")
         if filepath:
             self.bg_edit.setText(filepath)
-
-    def open_font_filepath(self):
-        filepath, _ = QFileDialog.getOpenFileName(self, "请选取字体文件", '.',
-                                                  "Font Files (*.ttf *.otf);;All Files (*)")
-        if filepath:
-            self.font_edit.setText(filepath)
 
     def save_card(self):
         if not self.card_image:
