@@ -14,10 +14,9 @@ class BirthdayCardGUI(QtWidgets.QWidget):
 
     def initUI(self):
         # 窗口设置
-        self.setFixedSize(600, 500)
-        self.setWindowTitle('生日祝福卡生成器-TONOW')
+        self.setFixedSize(1200, 900)
+        self.setWindowTitle('生日祝福卡生成软件')
         self.setWindowIcon(QIcon('icon/icon.png'))
-        self.grid = QGridLayout()
 
         # 一些全局变量
         self.card_image = None
@@ -30,12 +29,12 @@ class BirthdayCardGUI(QtWidgets.QWidget):
         self.fontcolor_label = QLabel('字体颜色:')
         self.show_label = QLabel()
         self.show_label.setScaledContents(True)
-        self.show_label.setMaximumSize(600, 300)
+        self.show_label.setMaximumSize(800, 600)
 
         self.content_edit = QLineEdit()
-        self.content_edit.setText('contents/birthday.card')
+        self.content_edit.setText('contents/birthday.txt')
         self.bg_edit = QLineEdit()
-        self.bg_edit.setText('bgimages/birthday.png')
+        self.bg_edit.setText('bgimages/1.png')
         self.font_edit = QLineEdit()
         self.font_edit.setText('fonts/font.TTF')
 
@@ -48,23 +47,53 @@ class BirthdayCardGUI(QtWidgets.QWidget):
         self.font_color_combobox = QComboBox()
         for color in ['red', 'white', 'black', 'blue', 'yellow', 'green']:
             self.font_color_combobox.addItem(color)
+        self.font_color_combobox.setFixedWidth(1100)  # 设置下拉列表宽度
 
         # 布局设置
-        self.grid.addWidget(self.show_label, 0, 0, 5, 5)
-        self.grid.addWidget(self.content_label, 5, 0, 1, 1)
-        self.grid.addWidget(self.content_edit, 5, 1, 1, 3)
-        self.grid.addWidget(self.choose_content_button, 5, 4, 1, 1)
-        self.grid.addWidget(self.bg_label, 6, 0, 1, 1)
-        self.grid.addWidget(self.bg_edit, 6, 1, 1, 3)
-        self.grid.addWidget(self.choose_bg_button, 6, 4, 1, 1)
-        self.grid.addWidget(self.font_label, 7, 0, 1, 1)
-        self.grid.addWidget(self.font_edit, 7, 1, 1, 3)
-        self.grid.addWidget(self.choose_font_button, 7, 4, 1, 1)
-        self.grid.addWidget(self.fontcolor_label, 8, 0, 1, 1)
-        self.grid.addWidget(self.font_color_combobox, 8, 1, 1, 1)
-        self.grid.addWidget(self.generate_button, 8, 3, 1, 1)
-        self.grid.addWidget(self.save_button, 8, 4, 1, 1)
-        self.setLayout(self.grid)
+        main_layout = QVBoxLayout()
+        input_layout = QVBoxLayout()
+        button_layout = QHBoxLayout()
+        display_layout = QVBoxLayout()
+        show_label_layout = QHBoxLayout()
+
+        content_layout = QHBoxLayout()
+        content_layout.addWidget(self.content_label)
+        content_layout.addWidget(self.content_edit)
+        content_layout.addWidget(self.choose_content_button)
+
+        bg_layout = QHBoxLayout()
+        bg_layout.addWidget(self.bg_label)
+        bg_layout.addWidget(self.bg_edit)
+        bg_layout.addWidget(self.choose_bg_button)
+
+        font_layout = QHBoxLayout()
+        font_layout.addWidget(self.font_label)
+        font_layout.addWidget(self.font_edit)
+        font_layout.addWidget(self.choose_font_button)
+
+        font_color_layout = QHBoxLayout()
+        font_color_layout.addWidget(self.fontcolor_label)
+        font_color_layout.addWidget(self.font_color_combobox)
+
+        input_layout.addLayout(content_layout)
+        input_layout.addLayout(bg_layout)
+        input_layout.addLayout(font_layout)
+        input_layout.addLayout(font_color_layout)
+
+        button_layout.addWidget(self.generate_button)
+        button_layout.addWidget(self.save_button)
+
+        show_label_layout.addStretch(1)
+        show_label_layout.addWidget(self.show_label)
+        show_label_layout.addStretch(1)
+
+        display_layout.addLayout(show_label_layout)
+
+        main_layout.addLayout(input_layout)
+        main_layout.addLayout(button_layout)
+        main_layout.addLayout(display_layout)
+
+        self.setLayout(main_layout)
 
         # 事件绑定
         self.choose_content_button.clicked.connect(self.open_content_filepath)
@@ -89,10 +118,11 @@ class BirthdayCardGUI(QtWidgets.QWidget):
         image = Image.open(bg_path).convert('RGB')
         draw = ImageDraw.Draw(image)
 
-        draw.text((180, 30), contents[0], font=font_card, fill=font_color)
-        for idx, content in enumerate(contents[1: -1]):
-            draw.text((220, 40 + (idx + 1) * 40), content, font=font_card, fill=font_color)
-        draw.text((180, 40 + (idx + 2) * 40 + 10), contents[-1], font=font_card, fill=font_color)
+        if contents:
+            draw.text((180, 30), contents[0], font=font_card, fill=font_color)
+            for idx, content in enumerate(contents[1:]):
+                draw.text((220, 40 + (idx + 1) * 40), content, font=font_card, fill=font_color)
+                draw.text((180, 40 + (idx + 2) * 40 + 10), contents[-1], font=font_card, fill=font_color)
 
         self.display_image(image)
         self.card_image = image
