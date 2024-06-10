@@ -32,9 +32,9 @@ class BirthdayCardGUI(QtWidgets.QWidget):
         self.show_label.setFixedSize(1100, 600)  # 设置显示大小
 
         self.content_edit = QLineEdit()
-        self.content_edit.setText('contents/birthday.txt')
+        self.content_edit.setText('生日祝福.txt')
         self.bg_edit = QLineEdit()
-        self.bg_edit.setText('bgimages/1.png')
+        self.bg_edit.setText('背景图片.png')
         self.font_combobox = QComboBox()  # 使用下拉列表选择字体
 
         self.choose_content_button = QPushButton('选择内容')
