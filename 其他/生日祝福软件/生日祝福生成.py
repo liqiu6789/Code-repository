@@ -15,7 +15,7 @@ class BirthdayCardGUI(QtWidgets.QWidget):
     def initUI(self):
         # 窗口设置
         self.setFixedSize(1200, 900)
-        self.setWindowTitle('生日祝福卡生成软件')
+        self.setWindowTitle('基于Python开发的生日祝福生成系统')
         self.setWindowIcon(QIcon('icon/icon.png'))
 
         # 一些全局变量
