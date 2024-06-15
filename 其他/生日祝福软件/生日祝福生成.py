@@ -43,12 +43,15 @@ class BirthdayCardGUI(QtWidgets.QWidget):
         self.save_button = QPushButton('保存祝福')
 
         self.font_color_combobox = QComboBox()
+        colors = ['酸橙色', '栗色', '海军蓝', '橄榄色', '水鸭色', '紫罗兰色', '金色',
+                  '红色', '白色', '黑色', '蓝色', '黄色', '绿色', '紫色',
+                  '橙色', '粉红色', '棕色', '灰色', '青色', '洋红色']
+        for color in colors:
+            self.font_color_combobox.addItem(color)
         colors = ['lime', 'maroon', 'navy', 'olive', 'teal', 'violet', 'gold',
                   'red', 'white', 'black', 'blue', 'yellow', 'green', 'purple',
                   'orange', 'pink', 'brown', 'gray', 'cyan', 'magenta'
                   ]
-        for color in colors:
-            self.font_color_combobox.addItem(color)
         for item in (self.choose_content_button, self.choose_bg_button, self.generate_button, self.save_button):
             item.setFixedHeight(30)
         self.font_color_combobox.setFixedWidth(1100)
@@ -117,7 +120,8 @@ class BirthdayCardGUI(QtWidgets.QWidget):
         content_path = self.content_edit.text()
         bg_path = self.bg_edit.text()
         font_family = self.font_combobox.currentText()
-        font_color = self.font_color_combobox.currentText()
+        #font_color = self.font_color_combobox.currentText()
+        font_color = "gold"
 
         if not all(map(self.check_filepath, [content_path, bg_path])):
             self.card_image = None
@@ -150,7 +154,7 @@ class BirthdayCardGUI(QtWidgets.QWidget):
             "宋体": "C:\\Windows\\Fonts\\simsun.ttc",
             "新罗马": "C:\\Windows\\Fonts\\times.ttf",
             "SimSun": "C:\\Windows\\Fonts\\simsun.ttc",
-            "SimHei": "C:\\Windows\\Fonts\\simhei.ttf",
+            "黑体": "C:\\Windows\\Fonts\\simhei.ttf",
             "楷体": "C:\\Windows\\Fonts\\simkai.ttf",
             "仿宋": "C:\\Windows\\Fonts\\simfang.ttf",
             "微软雅黑": "C:\\Windows\\Fonts\\msyh.ttc",
