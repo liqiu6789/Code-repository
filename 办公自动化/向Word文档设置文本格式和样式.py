@@ -3,7 +3,7 @@ from docx.shared import Pt, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 # 打开一个现有的文档
-doc = Document('path_to_your_existing_document.docx')
+doc = Document(r"C:\Users\Administrator\Desktop\Word文档\example.docx")
 
 # 修改第一个段落的格式
 p = doc.paragraphs[0]
@@ -24,4 +24,4 @@ run.font.color.rgb = RGBColor(255, 0, 0)
 p.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
 # 保存修改后的文档
-doc.save('modified_document.docx')
+doc.save(r"C:\Users\Administrator\Desktop\Word文档\example.docx")
