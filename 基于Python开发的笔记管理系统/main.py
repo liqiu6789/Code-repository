@@ -26,7 +26,9 @@ class NoteApp(QMainWindow):
         self.setGeometry(100, 100, 800, 600)
 
         # Widgets
+        self.noteListLabel = QLabel('笔记列表:')
         self.noteList = QListWidget()
+        self.noteContentLabel = QLabel('笔记内容:')
         self.noteContent = QTextEdit()
         self.titleInput = QLineEdit()
         self.tagInput = QLineEdit()
@@ -52,7 +54,9 @@ class NoteApp(QMainWindow):
         btnLayout.addWidget(self.filterBtn)
 
         layout.addLayout(hLayout)
+        layout.addWidget(self.noteListLabel)
         layout.addWidget(self.noteList)
+        layout.addWidget(self.noteContentLabel)
         layout.addWidget(self.noteContent)
         layout.addLayout(btnLayout)
 
