@@ -25,7 +25,7 @@ class NoteApp(QMainWindow):
         self.setWindowTitle('基于Python开发的笔记管理系统')
         self.setGeometry(100, 100, 800, 600)
 
-        # Widgets
+        # 小部件
         self.noteListLabel = QLabel('笔记列表:')
         self.noteList = QListWidget()
         self.noteContentLabel = QLabel('笔记内容:')
@@ -33,13 +33,13 @@ class NoteApp(QMainWindow):
         self.titleInput = QLineEdit()
         self.tagInput = QLineEdit()
 
-        # Buttons
+        # 按钮
         self.newBtn = QPushButton('新建')
         self.saveBtn = QPushButton('保存')
         self.deleteBtn = QPushButton('删除')
         self.filterBtn = QPushButton('按标签过滤')
 
-        # Layouts
+        # 布局
         layout = QVBoxLayout()
         hLayout = QHBoxLayout()
         hLayout.addWidget(QLabel('标题:'))
@@ -64,10 +64,10 @@ class NoteApp(QMainWindow):
         container.setLayout(layout)
         self.setCentralWidget(container)
 
-        # Toolbar for rich text
+        # 富文本工具栏
         self.createToolbar()
 
-        # Signals
+        # 信号
         self.newBtn.clicked.connect(self.newNote)
         self.saveBtn.clicked.connect(self.saveNote)
         self.deleteBtn.clicked.connect(self.deleteNote)
@@ -113,7 +113,7 @@ class NoteApp(QMainWindow):
 
     def saveNote(self):
         title = self.titleInput.text()
-        content = self.noteContent.toHtml()  # Save as HTML for rich text
+        content = self.noteContent.toHtml()  # 保存为HTML以支持富文本
         tags = self.tagInput.text().split(',')
         date = QDateTime.currentDateTime()
 
@@ -123,10 +123,17 @@ class NoteApp(QMainWindow):
             current_note.content = content
             current_note.tags = tags
             current_note.date = date
+            self.noteList.currentItem().setText(title)  # 更新显示的标题
         else:
             new_note = Note(title, content, tags, date)
             self.notes.append(new_note)
             self.noteList.addItem(title)
+
+        # 保存后清除输入
+        self.titleInput.clear()
+        self.tagInput.clear()
+        self.noteContent.clear()
+        self.noteList.clearSelection()
 
     def deleteNote(self):
         if self.noteList.currentItem():
@@ -137,7 +144,7 @@ class NoteApp(QMainWindow):
         selected_note = self.notes[self.noteList.row(item)]
         self.titleInput.setText(selected_note.title)
         self.tagInput.setText(','.join(selected_note.tags))
-        self.noteContent.setHtml(selected_note.content)  # Load as HTML for rich text
+        self.noteContent.setHtml(selected_note.content)  # 加载HTML以支持富文本
 
     def filterNotes(self):
         tag, ok = QInputDialog.getText(self, '按标签过滤', '输入标签:')
