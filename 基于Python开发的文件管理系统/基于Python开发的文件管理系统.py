@@ -90,16 +90,6 @@ class FileManager(QMainWindow):
         self.toolbar.addAction(viewIconAction)
         self.addAction(viewIconAction)
 
-        menuBar = self.menuBar()
-        fileMenu = menuBar.addMenu('文件')
-        viewMenu = menuBar.addMenu('视图')
-
-        fileMenu.addAction(copyAction)
-        fileMenu.addAction(moveAction)
-        fileMenu.addAction(deleteAction)
-        viewMenu.addAction(viewListAction)
-        viewMenu.addAction(viewIconAction)
-
     def onTreeViewClicked(self, index):
         path = self.model.filePath(index)
         self.listView.setRootIndex(self.model.index(path))
@@ -172,3 +162,4 @@ if __name__ == '__main__':
     ex = FileManager()
     ex.show()
     sys.exit(app.exec_())
+
