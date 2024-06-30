@@ -3,7 +3,7 @@ import os
 import shutil
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QFileSystemModel, QTreeView, QListView, QVBoxLayout, QWidget,
                              QToolBar, QLineEdit, QAction, QFileDialog, QLabel, QSplitter, QHBoxLayout, QMessageBox)
-from PyQt5.QtCore import Qt, QDir
+from PyQt5.QtCore import Qt, QDir, QSortFilterProxyModel, QModelIndex
 from PyQt5.QtGui import QIcon, QPixmap
 
 
@@ -20,6 +20,11 @@ class FileManager(QMainWindow):
         self.model = QFileSystemModel()
         self.model.setRootPath(QDir.rootPath())
 
+        self.proxyModel = QSortFilterProxyModel()
+        self.proxyModel.setSourceModel(self.model)
+        self.proxyModel.setFilterCaseSensitivity(Qt.CaseInsensitive)
+        self.proxyModel.setFilterKeyColumn(0)  # Apply filter to the file names
+
         self.treeView = QTreeView()
         self.treeView.setModel(self.model)
         self.treeView.setRootIndex(self.model.index(QDir.rootPath()))
@@ -28,8 +33,8 @@ class FileManager(QMainWindow):
         self.treeView.setSelectionMode(QTreeView.ExtendedSelection)
 
         self.listView = QListView()
-        self.listView.setModel(self.model)
-        self.listView.setRootIndex(self.model.index(QDir.rootPath()))
+        self.listView.setModel(self.proxyModel)
+        self.listView.setRootIndex(self.proxyModel.mapFromSource(self.model.index(QDir.rootPath())))
         self.listView.setAlternatingRowColors(True)
         self.listView.setSelectionMode(QListView.ExtendedSelection)
 
@@ -92,10 +97,10 @@ class FileManager(QMainWindow):
 
     def onTreeViewClicked(self, index):
         path = self.model.filePath(index)
-        self.listView.setRootIndex(self.model.index(path))
+        self.listView.setRootIndex(self.proxyModel.mapFromSource(self.model.index(path)))
 
     def onListViewDoubleClicked(self, index):
-        path = self.model.filePath(index)
+        path = self.model.filePath(self.proxyModel.mapToSource(index))
         if os.path.isfile(path):
             self.previewFile(path)
 
@@ -111,19 +116,20 @@ class FileManager(QMainWindow):
             self.previewLabel.setText(f'预览: {path}')
 
     def searchFiles(self):
-        searchText = self.searchBar.text().lower()
-        for i in range(self.model.rowCount()):
-            index = self.model.index(i, 0)
-            if searchText in self.model.fileName(index).lower():
-                self.listView.setRowHidden(i, False)
-            else:
-                self.listView.setRowHidden(i, True)
+        searchText = self.searchBar.text()
+        self.proxyModel.setFilterRegExp(searchText)
+        self.updateListView()
+
+    def updateListView(self):
+        currentIndex = self.treeView.currentIndex()
+        path = self.model.filePath(currentIndex)
+        self.listView.setRootIndex(self.proxyModel.mapFromSource(self.model.index(path)))
 
     def copyFile(self):
         selectedIndexes = self.listView.selectedIndexes()
         if not selectedIndexes:
             return
-        srcPath = self.model.filePath(selectedIndexes[0])
+        srcPath = self.model.filePath(self.proxyModel.mapToSource(selectedIndexes[0]))
         dstPath = QFileDialog.getExistingDirectory(self, '选择目标文件夹')
         if dstPath:
             shutil.copy(srcPath, dstPath)
@@ -132,7 +138,7 @@ class FileManager(QMainWindow):
         selectedIndexes = self.listView.selectedIndexes()
         if not selectedIndexes:
             return
-        srcPath = self.model.filePath(selectedIndexes[0])
+        srcPath = self.model.filePath(self.proxyModel.mapToSource(selectedIndexes[0]))
         dstPath = QFileDialog.getExistingDirectory(self, '选择目标文件夹')
         if dstPath:
             shutil.move(srcPath, dstPath)
@@ -144,7 +150,7 @@ class FileManager(QMainWindow):
         reply = QMessageBox.question(self, '确认删除', '确定要删除选中的文件吗？', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
             for index in selectedIndexes:
-                path = self.model.filePath(index)
+                path = self.model.filePath(self.proxyModel.mapToSource(index))
                 if os.path.isdir(path):
                     shutil.rmtree(path)
                 else:
@@ -162,4 +168,3 @@ if __name__ == '__main__':
     ex = FileManager()
     ex.show()
     sys.exit(app.exec_())
-
