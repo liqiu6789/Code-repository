@@ -1,0 +1,66 @@
+class Label(QtWidgets.QWidget):
+    def __init__(self, parent=None):
+        super(Label, self).__init__(parent)
+        self.thread = WorkThread()
+        self.thread.my_signal.connect(self.timeStop)
+        self.drawing = False
+        self.drawing1 = True
+        self.lastPoint = QPoint()
+        self.image_path = "input.png"
+        self.thread.image_path = [self.image_path]
+        self.image_cv = cv2.imread(self.image_path)
+        self.image = QPixmap(self.image_path)
+        self.pen_size = 20
+        gray0 = np.zeros((self.image_cv.shape[0], self.image_cv.shape[1]), dtype=np.uint8)
+        cv2.imwrite("gray.png", gray0)
+        self.gray_img = QPixmap("gray.png")
+        self.lastPoint = QtCore.QPoint()
+
+    def paintEvent(self, event):
+
+        painter = QtGui.QPainter(self)
+        # painter.drawPixmap(QtCore.QPoint(), self.image)
+        # print(f'self.size is:{self.size()}')
+        # print(f'self.image.size is:{self.image.size()}')
+
+        painter.drawPixmap(QtCore.QPoint(0, 0), self.image.scaledToHeight(self.height())) # QPoint(0, 0)为鼠标偏移量
+
+    def mousePressEvent(self, event):
+        if event.button() == QtCore.Qt.LeftButton:
+            self.drawing = True
+
+            x = event.pos().x()
+            y = event.pos().y()
+            scale = self.height() / self.image.height()
+            x0 = int(x / scale)
+            y0 = int(y / scale)
+            self.lastPoint = QPoint(x0, y0)
+            # print(f'self.lastPoint is:{self.lastPoint}')
+
+    def mouseMoveEvent(self, event):
+        if event.buttons() and Qt.LeftButton and self.drawing and self.drawing1:
+            x = event.pos().x()
+            y = event.pos().y()
+            scale = self.height() / self.image.height()
+
+            x0 = int(x / scale)
+            y0 = int(y / scale)
+            self.nowPoint = QPoint(x0, y0)
+
+            # 在原图上绘制轮廓
+            painter = QPainter(self.image)
+            painter.setRenderHint(QPainter.SmoothPixmapTransform, True)
+            painter.setRenderHint(QPainter.HighQualityAntialiasing, True)
+            painter.setPen(QPen(self.pen_color, self.pen_size, Qt.SolidLine))
+            painter.drawEllipse(self.nowPoint, int(self.pen_size/ 2)+1, int(self.pen_size/ 2)+1)
+            self.lastPoint = self.nowPoint
+            self.update()
+
+            # 在mask图像上绘制轮廓
+            painter = QPainter(self.gray_img)
+            painter.setRenderHint(QPainter.SmoothPixmapTransform, True)
+            painter.setRenderHint(QPainter.HighQualityAntialiasing, True)
+            painter.setPen(QPen(self.pen_color, self.pen_size, Qt.SolidLine))
+            painter.drawEllipse(self.nowPoint, int(self.pen_size/ 2)+1, int(self.pen_size/ 2)+1)
+            self.lastPoint = self.nowPoint
+            self.update()
