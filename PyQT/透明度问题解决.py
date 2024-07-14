@@ -1,95 +1,94 @@
-import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QColorDialog, QSlider, QWidget, QPushButton, QDockWidget
-from PyQt5.QtGui import QPainter, QPen, QColor, QMouseEvent
-from PyQt5.QtCore import Qt
+from PyQt5 import QtWidgets, QtCore, QtGui
+from PyQt5.QtCore import QPoint, Qt, pyqtSignal, QThread
+from PyQt5.QtGui import QPixmap, QPainter, QPen, QColor
+import cv2
+import numpy as np
 
-class DrawingWindow(QMainWindow):
+class WorkThread(QThread):
+    my_signal = pyqtSignal()
+
     def __init__(self):
-        super().__init__()
+        super(WorkThread, self).__init__()
+        self.image_path = []
 
-        self.initUI()
+    def run(self):
+        # 模拟一个工作线程，在完成后发出信号
+        import time
+        time.sleep(5)  # 模拟长时间操作
+        self.my_signal.emit()
 
-    def initUI(self):
-        self.setGeometry(100, 100, 800, 600)
-        self.setWindowTitle('Drawing with PyQt5')
-
-        self.drawing_widget = DrawingWidget(self)
-        self.setCentralWidget(self.drawing_widget)
-
-        self.color_button = QPushButton('Choose Color', self)
-        self.color_button.clicked.connect(self.choose_color)
-
-        self.alpha_slider = QSlider(Qt.Horizontal, self)
-        self.alpha_slider.setRange(0, 255)
-        self.alpha_slider.setValue(255)
-        self.alpha_slider.valueChanged.connect(self.change_alpha)
-
-        layout = QVBoxLayout()
-        layout.addWidget(self.color_button)
-        layout.addWidget(self.alpha_slider)
-        container = QWidget()
-        container.setLayout(layout)
-
-        dock_widget = QDockWidget("Tools", self)
-        dock_widget.setWidget(container)
-        self.addDockWidget(Qt.RightDockWidgetArea, dock_widget)
-
-        self.show()
-
-    def choose_color(self):
-        color = QColorDialog.getColor()
-        if color.isValid():
-            self.drawing_widget.set_pen_color(color)
-
-    def change_alpha(self, value):
-        self.drawing_widget.set_pen_alpha(value)
-
-class DrawingWidget(QWidget):
-    def __init__(self, parent):
-        super().__init__(parent)
-        self.pen_color = QColor(0, 0, 0, 255)
-        self.pen = QPen(self.pen_color, 2, Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin)
+class Label(QtWidgets.QWidget):
+    def __init__(self, parent=None):
+        super(Label, self).__init__(parent)
+        self.thread = WorkThread()
+        self.thread.my_signal.connect(self.timeStop)
         self.drawing = False
-        self.last_point = None
-        self.image = None
+        self.drawing1 = True
+        self.lastPoint = QPoint()
+        self.image_path = "img.png"
+        self.thread.image_path = [self.image_path]
+        self.image_cv = cv2.imread(self.image_path)
+        self.image = QPixmap(self.image_path)
+        self.pen_size = 20
+        self.pen_color = QColor(255, 0, 0, 76)  # 红色，透明度为 30%
+        self.temp_image = QPixmap(self.image.size())
+        self.temp_image.fill(Qt.transparent)
+        self.lastPoint = QPoint()
 
-    def set_pen_color(self, color):
-        self.pen_color = QColor(color.red(), color.green(), color.blue(), self.pen_color.alpha())
-        self.pen.setColor(self.pen_color)
-
-    def set_pen_alpha(self, alpha):
-        self.pen_color.setAlpha(alpha)
-        self.pen.setColor(self.pen_color)
+    def timeStop(self):
+        # 处理线程结束后的操作
+        print("Thread finished")
 
     def paintEvent(self, event):
-        if self.image is None:
-            self.image = self.grab().toImage()
-        painter = QPainter(self)
-        painter.drawImage(self.rect(), self.image, self.image.rect())
-        if self.drawing and self.last_point:
-            painter.setPen(self.pen)
-            painter.drawLine(self.last_point, event.pos())
-            self.last_point = event.pos()
+        painter = QtGui.QPainter(self)
+        painter.drawPixmap(QtCore.QPoint(0, 0), self.image.scaled(self.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        painter.drawPixmap(QtCore.QPoint(0, 0), self.temp_image.scaled(self.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
 
     def mousePressEvent(self, event):
-        if event.button() == Qt.LeftButton:
+        if event.button() == QtCore.Qt.LeftButton:
             self.drawing = True
-            self.last_point = event.pos()
+
+            x = event.pos().x()
+            y = event.pos().y()
+            scale = self.height() / self.image.height()
+            x0 = int(x / scale)
+            y0 = int(y / scale)
+            self.lastPoint = QPoint(x0, y0)
 
     def mouseMoveEvent(self, event):
-        if self.drawing and event.buttons() & Qt.LeftButton:
-            painter = QPainter(self.image)
-            painter.setPen(self.pen)
-            painter.drawLine(self.last_point, event.pos())
-            self.last_point = event.pos()
+        if event.buttons() & Qt.LeftButton and self.drawing and self.drawing1:
+            x = event.pos().x()
+            y = event.pos().y()
+            scale = self.height() / self.image.height()
+            x0 = int(x / scale)
+            y0 = int(y / scale)
+            self.nowPoint = QPoint(x0, y0)
+
+            # 清空临时图像
+            self.temp_image.fill(Qt.transparent)
+
+            # 在临时图像上绘制轮廓
+            painter = QPainter(self.temp_image)
+            painter.setRenderHint(QPainter.SmoothPixmapTransform, True)
+            painter.setRenderHint(QPainter.HighQualityAntialiasing, True)
+            painter.setPen(QPen(self.pen_color, self.pen_size, Qt.SolidLine))
+            painter.drawEllipse(self.nowPoint, int(self.pen_size / 2) + 1, int(self.pen_size / 2) + 1)
+            self.lastPoint = self.nowPoint
+
             self.update()
 
     def mouseReleaseEvent(self, event):
         if event.button() == Qt.LeftButton:
             self.drawing = False
-            self.last_point = None
 
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    window = DrawingWindow()
+            # 将临时图像的内容合并到主图像
+            painter = QPainter(self.image)
+            painter.drawPixmap(0, 0, self.temp_image)
+            self.update()
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    label = Label()
+    label.show()
     sys.exit(app.exec_())
